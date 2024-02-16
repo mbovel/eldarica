@@ -1,0 +1,10 @@
+.bsp
+.bloop
+.metals
+.vscode
+project/project
+project/build.properties
+project/metals.sbt
+target
+cc-parser/bin
+cc-parser/lazabs
