@@ -52,8 +52,9 @@ object HornClauses {
     (for (clause <- clauses.iterator;
           p <- clause.predicates.iterator) yield p).toSet - HornClauses.FALSE
 
-  def allPredicatesCC[CC <% HornClauses.ConstraintClause]
-                     (clauses : Iterable[CC]) : Set[Predicate] =
+  def allPredicatesCC[CC]
+                     (clauses : Iterable[CC])
+                     (implicit ev: CC => ConstraintClause) : Set[Predicate] =
     (for (clause <- clauses.iterator;
           p <- clause.predicates.iterator) yield p).toSet - HornClauses.FALSE
 
@@ -364,8 +365,11 @@ object HornClauses {
   
   //////////////////////////////////////////////////////////////////////////////
 
-  implicit def eitherClause[CC1 <% ConstraintClause, CC2 <% ConstraintClause]
-                           (c : Either[CC1, CC2]) : ConstraintClause = c match {
+  implicit def eitherClause[CC1, CC2]
+                           (c : Either[CC1, CC2])
+                           (implicit ev1: CC1 => ConstraintClause,
+                                     ev2: CC2 => ConstraintClause) 
+                           : ConstraintClause = c match {
     case Left(c) => c
     case Right(c) => c
   }

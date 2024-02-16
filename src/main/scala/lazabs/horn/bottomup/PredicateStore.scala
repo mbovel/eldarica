@@ -77,8 +77,9 @@ object PredicateStore {
 
 }
 
-class PredicateStore[CC <% HornClauses.ConstraintClause]
-                    (context : HornPredAbsContext[CC]) {
+class PredicateStore[CC]
+                    (context : HornPredAbsContext[CC])
+                    (implicit ev: CC => HornClauses.ConstraintClause) {
 
   import context._
   import PredicateStore._

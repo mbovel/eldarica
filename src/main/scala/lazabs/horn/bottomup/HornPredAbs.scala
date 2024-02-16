@@ -101,14 +101,15 @@ object HornPredAbs {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class HornPredAbs[CC <% HornClauses.ConstraintClause]
+class HornPredAbs[CC]
                  (iClauses : Iterable[CC],
                   initialPredicates : Map[Predicate, Seq[IFormula]],
                   predicateGenerator : Dag[AndOrNode[NormClause, Unit]] =>
                                        Either[Seq[(Predicate, Seq[Conjunction])],
                                               Dag[(IAtom, NormClause)]],
                   counterexampleMethod : CEGAR.CounterexampleMethod.Value =
-                                           CEGAR.CounterexampleMethod.FirstBestShortest) {
+                                           CEGAR.CounterexampleMethod.FirstBestShortest)
+                 (implicit ev: CC => HornClauses.ConstraintClause) {
   
   import HornPredAbs._
 

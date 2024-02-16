@@ -38,8 +38,9 @@ import DisjInterpolator.{AndOrNode, AndNode, OrNode}
 
 import scala.collection.mutable.ArrayBuffer
 
-class PredicateMiner[CC <% HornClauses.ConstraintClause]
-                    (predAbs : HornPredAbs[CC]) {
+class PredicateMiner[CC]
+                    (predAbs : HornPredAbs[CC])
+                    (implicit ev: CC => HornClauses.ConstraintClause) {
 
   import predAbs.{context, predStore}
 

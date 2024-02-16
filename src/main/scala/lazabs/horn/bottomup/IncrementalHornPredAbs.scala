@@ -43,7 +43,7 @@ import DisjInterpolator._
  * the relation symbols with concrete formulas.
  */
 class IncrementalHornPredAbs
-                 [CC <% HornClauses.ConstraintClause]
+                 [CC]
                  (iClauses : Iterable[CC],
                   initialPredicates : Map[Predicate, Seq[IFormula]],
                   substitutableSyms : Set[Predicate],
@@ -51,7 +51,8 @@ class IncrementalHornPredAbs
                                        Either[Seq[(Predicate, Seq[Conjunction])],
                                               Dag[(IAtom, NormClause)]],
                   counterexampleMethod : CEGAR.CounterexampleMethod.Value =
-                                           CEGAR.CounterexampleMethod.FirstBestShortest) {
+                                           CEGAR.CounterexampleMethod.FirstBestShortest)
+                 (implicit ev: CC => HornClauses.ConstraintClause) {
 
   lazabs.GlobalParameters.get.setupApUtilDebug
 

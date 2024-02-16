@@ -64,8 +64,9 @@ object DisjInterpolator {
    * The predicate generator receives an and/or-clause-dag, and either
    * returns a list of new predicates, or a counterexample dag.
    */
-  def iPredicateGenerator[CC <% ConstraintClause]
+  def iPredicateGenerator[CC]
                          (clauseDag : Dag[AndOrNode[CC, Unit]])
+                         (implicit ev: CC => HornClauses.ConstraintClause)
                         : Either[Seq[(Predicate, Seq[IFormula])],
                                  Dag[(IAtom, Option[CC])]] = predicateGenerator(clauseDag) match {
     case Left(predicates) => {
@@ -89,9 +90,10 @@ object DisjInterpolator {
    * try disjunctive interpolation, before aborting and restarting
    * interpolation with a reduced number of or-nodes.
    */
-  def predicateGenerator[CC <% ConstraintClause]
+  def predicateGenerator[CC]
                         (clauseDag : Dag[AndOrNode[CC, Unit]],
                          orInterpolationTimeout : Int = Int.MaxValue)
+                        (implicit ev: CC => HornClauses.ConstraintClause)
                        : Either[Seq[(Predicate, Seq[Conjunction])],
                                 Dag[(IAtom, Option[CC])]] = {
     val (factoredDag, localPreds) = factoring(clauseDag)
@@ -188,9 +190,10 @@ object DisjInterpolator {
 
   //////////////////////////////////////////////////////////////////////////////
 
-  private def predicateGeneratorHelp[CC <% ConstraintClause]
+  private def predicateGeneratorHelp[CC]
                         (clauseDag : Dag[AndOrNode[CC, Unit]],
                          giveUpCondition : (Int, Int) => Boolean)
+                        (implicit ev: CC => HornClauses.ConstraintClause)
                        : Either[Seq[(Predicate, Seq[Conjunction])],
                                 Dag[(IAtom, CC)]] =
     SimpleAPI.withProver(enableAssert = lazabs.GlobalParameters.get.assertions) { p =>
@@ -731,8 +734,10 @@ object DisjInterpolator {
 
   //////////////////////////////////////////////////////////////////////////////
 
-  private def headLiteral[CC <% ConstraintClause]
-                         (d : Dag[AndOrNode[CC, Unit]]) : Literal = d match {
+  private def headLiteral[CC]
+                         (d : Dag[AndOrNode[CC, Unit]])
+                         (implicit ev: CC => ConstraintClause)
+                         : Literal = d match {
     case DagNode(AndNode(c), _, _) => c.head
     case DagNode(OrNode(_), c :: _, next) => headLiteral(next drop (c-1))
     case _ => { assert(false); null }
@@ -750,8 +755,9 @@ object DisjInterpolator {
    *    t :- s, v
    * with a fresh relation symbol t
    */
-  private def factoring[CC <% ConstraintClause]
+  private def factoring[CC]
                        (clauseDag : Dag[AndOrNode[CC, Unit]])
+                       (implicit ev: CC => ConstraintClause)
                        : (Dag[AndOrNode[Either[CC, ConstraintClause], Unit]],
                           Seq[Predicate]) = {
     type CCDag = Dag[AndOrNode[Either[CC, ConstraintClause], Unit]]
@@ -925,9 +931,10 @@ object DisjInterpolator {
 
   var benchmarkCounter = 0
 
-  private def printHornSMT[CC <% ConstraintClause]
+  private def printHornSMT[CC]
                           (clauseDag : Dag[AndOrNode[CC, Unit]],
-                           solvable : Option[Boolean]) : Unit = {
+                           solvable : Option[Boolean])
+                          (implicit ev: CC => ConstraintClause) : Unit = {
     println("printing in SMT format ...")
 
     val usedIndexes = new MHashSet[Int]
