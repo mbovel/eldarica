@@ -57,6 +57,8 @@ import scala.collection.{Map => CMap}
 import scala.collection.mutable.{HashMap => MHashMap, ArrayBuffer,
                                  HashSet => MHashSet, LinkedHashSet}
 
+import scala.jdk.CollectionConverters._
+
 object HornReader {
   def apply(fileName: String): Seq[HornClause] = {
     val in = new java.io.BufferedReader (
@@ -64,8 +66,7 @@ object HornReader {
     val lexer = new HornLexer(in)
     val parser = new Parser(lexer)
     val tree = parser.parse()
-    (scala.collection.JavaConversions.asScalaBuffer(
-       tree.value.asInstanceOf[java.util.List[HornClause]]))
+    tree.value.asInstanceOf[java.util.List[HornClause]].asScala.toSeq
   }
 
   def fromSMT(fileName: String) : Seq[HornClause] =
@@ -345,7 +346,7 @@ class SMTHornReader protected[parser] (
           }
         }
 
-        val newOrder = oriSignature.order extendPred newPreds
+        val newOrder = oriSignature.order extendPred newPreds.toSeq
 
         (UniformSubstVisitor(oriF, unintPredMapping),
          unintPredicates, oriSignature updateOrder newOrder)
@@ -723,7 +724,7 @@ class SMTHornReader protected[parser] (
       def existentialiseAtom(a : Atom) : IAtom = {
         val existConsts = createExistentialConstants(a.size)
 
-        implicit val _ = order
+        implicit val termOrder = order
         import TerForConvenience._
 
         addAssertion(a === (for (IConstant(c) <- existConsts) yield c))
@@ -752,6 +753,6 @@ class SMTHornReader protected[parser] (
 
     reset
 
-    resClauses
+    resClauses.toSeq
   }
 }

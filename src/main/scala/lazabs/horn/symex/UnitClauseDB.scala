@@ -31,7 +31,7 @@ package lazabs.horn.symex
 import lazabs.horn.bottomup.{NormClause, RelationSymbol}
 import ap.terfor.preds.Predicate
 
-import scala.collection.{AbstractSeq, IndexedSeqLike}
+import scala.collection.AbstractSeq
 import scala.collection.mutable.{
   ListBuffer,
   ArrayBuffer => MArrayBuffer,

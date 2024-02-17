@@ -34,7 +34,7 @@ import lazabs.ast.ASTree._
 import lazabs.types._
 import BipAst._
 import ujf.verimag.bip.Core._
-import scala.collection.JavaConversions._
+import scala.jdk.CollectionConverters._
 
 
 object HornBip {

@@ -230,7 +230,7 @@ object DisjInterpolator {
       }
 
       def flag2Conj(f : IFormula) : Conjunction = {
-        implicit val _ = order
+        implicit val termOrder = order
         import TerForConvenience._
         f match {
           case IAtom(p, Seq()) => p(List())
@@ -852,14 +852,14 @@ object DisjInterpolator {
               val newHeadArgs = headArguments take headLit.predicate.arity
               val newBodyArgs = for (p <- newBodyLits) yield p match {
                 case Left(newInd) =>
-                  bodyArguments(newInd)
+                  bodyArguments(newInd).toSeq
                 case Right(sharedInd) => {
                   val o = tempPredArgOffsets(sharedInd)
                   headArguments.view(
-                    o, o + sharedHeadLits(sharedInd).predicate.arity)
+                    o, o + sharedHeadLits(sharedInd).predicate.arity).toSeq
                 }
               }
-              clause.instantiateConstraint(newHeadArgs, newBodyArgs,
+              clause.instantiateConstraint(newHeadArgs, newBodyArgs.toSeq,
                                            localVariables, sig)
             }
           }
@@ -881,11 +881,11 @@ object DisjInterpolator {
                                     localVariables : Seq[ConstantTerm],
                                     sig : Signature) = {
             import TerForConvenience._
-            implicit val _ = sig.order
+            implicit val termOrder = sig.order
             val tempPredArgs = bodyArguments.head
             (headArguments === tempPredArgs.take(headArguments.size)) & conj(
                 for ((args, o) <- bodyArguments.tail zip tempPredArgOffsets)
-                yield (args === tempPredArgs.view(o, o + args.size)))
+                yield (args === tempPredArgs.view(o, o + args.size).toSeq))
           }
         }
 
@@ -916,7 +916,7 @@ object DisjInterpolator {
       }
     }
 
-    (dag, localPreds)
+    (dag, localPreds.toSeq)
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -968,7 +968,7 @@ object DisjInterpolator {
         if (headLit.predicate != FALSE)
           order = order extendPred pred
 
-        implicit val _ = order
+        implicit val termOrder = order
         import TerForConvenience._
         freshRelSyms.put(i, Atom(pred, for (c <- args) yield l(c), order))
       }
@@ -1063,7 +1063,7 @@ object DisjInterpolator {
                                    ("%04d".format(benchmarkCounter)) + ".smt2")
     benchmarkCounter = benchmarkCounter + 1
     Console.withOut(benchmarkFile) {
-      SMTLineariser(clauseFormulas,
+      SMTLineariser(clauseFormulas.toSeq,
                     Signature(Set(), Set(), Set(), order restrict Set()),
                     "HORN",
                     solvable match {

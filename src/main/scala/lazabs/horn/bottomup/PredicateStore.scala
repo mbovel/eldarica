@@ -280,7 +280,7 @@ class PredicateStore[CC]
 
       impliedPreds.isEmpty || {
         import TerForConvenience._
-        implicit val _ = sf.order
+        implicit val termOrder = sf.order
         val c = sf reduce conj(impliedPreds)
         !((sf reducer c)(f).isTrue)
       }

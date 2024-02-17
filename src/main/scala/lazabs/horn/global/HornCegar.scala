@@ -258,11 +258,11 @@ case class HornCegar(val originalConstraints: Seq[HornClause], val log: Boolean)
   def topolOrder: HashMap[ARGNode,Int] = {
     var result: HashMap[ARGNode,Int] = HashMap[ARGNode,Int]()
     
-    var inDegrees = (arg.transitions.map {
+    var inDegrees: Map[ARGNode, Int] = ((arg.transitions.map {
       case (n,andTrans) => (for (relChild <- andTrans.map {
         case AndTransition(clause,children) => (for (r@RelVarNode(_,_,_) <- children.distinct) yield r)
       }.flatten) yield (relChild,n))
-    }.flatten.groupBy(_._1).mapValues(_.size)) ++ Map(arg.startNode -> 0) ++ (arg.or.values.flatten.map(dum => (dum,1))).toMap
+    }.flatten.groupBy(_._1).mapValues(_.size)).toMap: Map[ARGNode, Int]) ++ Map(arg.startNode -> 0) ++ arg.or.values.flatten.map(dum => (dum,1)).toMap
         
     var current = 0
     while(!inDegrees.isEmpty) {

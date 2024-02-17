@@ -38,6 +38,8 @@ import ap.terfor.substitutions.ConstantSubst
 import ap.proof.ModelSearchProver
 import ap.util.Seqs
 
+import lazabs.utils.CollectionUtils
+
 import Util._
 import DisjInterpolator.{AndOrNode, AndNode, OrNode}
 
@@ -467,7 +469,7 @@ class CEGAR[CC]
 
     val (remainingExp, reactivatedExp) =
       postponedExpansions partition (_._1 exists (backwardSubsumedStates contains _))
-    postponedExpansions reduceToSize 0
+    CollectionUtils.reduceToSize(postponedExpansions, 0)
     postponedExpansions ++= remainingExp
 
     for (exp <- reactivatedExp)
@@ -504,7 +506,7 @@ class CEGAR[CC]
 
       } else {
 
-        implicit val _ = clause.order
+        implicit val termOrder = clause.order
 
         val initialAssumptions =
           sf.reduce(conj(List(clause.constraint) ++ (state instances occ)))
@@ -533,7 +535,7 @@ class CEGAR[CC]
                         fixedIndex : Int, occ : Int,
                         byStates : Array[Seq[AbstractState]]) : Unit = {
     import TerForConvenience._
-    implicit val _ = clause.order
+    implicit val termOrder = clause.order
 
     val NormClause(constraint, body, head) = clause
 
@@ -565,7 +567,7 @@ class CEGAR[CC]
                            fixedIndex : Int, occ : Int,
                            byStates : Array[Seq[AbstractState]]) : Unit = {
     import TerForConvenience._
-    implicit val _ = clause.order
+    implicit val termOrder = clause.order
 
     val NormClause(constraint, body, head) = clause
 
@@ -708,7 +710,7 @@ class CEGAR[CC]
        } else {
          val flags = createBooleanVariables(activeAbstractStates(brs).size)
 
-         implicit val _ = order
+         implicit val termOrder = order
          addAssertion(
            disj(for ((s, IAtom(p, _)) <-
                        activeAbstractStates(brs).iterator zip flags.iterator)
@@ -716,7 +718,7 @@ class CEGAR[CC]
          flags
        }).toIndexedSeq
 
-     implicit val _ = order
+     implicit val termOrder = order
 
      while (??? == ProverStatus.Sat) {
        val (chosenStates, assumptionSeq, sels) =
@@ -749,7 +751,7 @@ class CEGAR[CC]
     val remainingEdges = for (e@AbstractEdge(from, to, _, _) <- abstractEdges;
                               if (from forall reachable))
                          yield e
-    abstractEdges reduceToSize 0
+    CollectionUtils.reduceToSize(abstractEdges, 0)
     abstractEdges ++= remainingEdges
     
     for ((_, preds) <- activeAbstractStates)
@@ -765,7 +767,7 @@ class CEGAR[CC]
       for (exp@(from, _, _, _) <- postponedExpansions;
            if (from forall reachable))
       yield exp
-    postponedExpansions reduceToSize 0
+    CollectionUtils.reduceToSize(postponedExpansions, 0)
     postponedExpansions ++= remainingPostponedExpansions
 
     // Previously subsumed states might become relevant again
