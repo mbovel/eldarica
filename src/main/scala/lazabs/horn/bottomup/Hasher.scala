@@ -36,6 +36,8 @@ import ap.terfor.linearcombination.LinearCombination
 import ap.types.Sort
 import ap.util.Seqs
 
+import lazabs.utils.CollectionUtils
+
 import scala.collection.mutable.{ArrayBuffer, BitSet => MBitSet,
                                  HashMap => MHashMap}
 
@@ -152,7 +154,7 @@ class Hasher(globalOrder : TermOrder, reducerSettings : ReducerSettings)
 
   import Hasher._
   import IHasher._
-  private implicit val _globalOrder = globalOrder
+  private implicit val termOrderglobalOrder: TermOrder = globalOrder
 
   private val watchedFormulas = new ArrayBuffer[Conjunction]
   private val evalVectors     = new ArrayBuffer[MBitSet]
@@ -364,7 +366,7 @@ class Hasher(globalOrder : TermOrder, reducerSettings : ReducerSettings)
       assertionStack(i) match {
         case AssertionFrame(vec) => {
           currentEvalVector = vec
-          assertionStack reduceToSize i
+          CollectionUtils.reduceToSize(assertionStack, i)
           return
         }
         case _ =>

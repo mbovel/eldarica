@@ -41,9 +41,12 @@ import concurrentC.Absyn._
 
 import lazabs.horn.bottomup.HornClauses
 import lazabs.horn.abstractions.VerificationHints
+import lazabs.utils.CollectionUtils
 
 import scala.collection.mutable.{HashMap => MHashMap, ArrayBuffer, Buffer,
                                  Stack, LinkedHashSet}
+
+import scala.jdk.CollectionConverters._
 
 object CCReader {
 
@@ -106,7 +109,7 @@ object CCReader {
 
   import IExpression._
 
-  private abstract sealed class CCType {
+  abstract sealed class CCType {
   }
   private abstract class CCArithType extends CCType {
     val UNSIGNED_RANGE : IdealInt
@@ -154,7 +157,7 @@ object CCReader {
 
   //////////////////////////////////////////////////////////////////////////////
 
-  private abstract sealed class CCExpr(val typ : CCType) {
+  abstract sealed class CCExpr private[CCReader](val typ : CCType) {
     def toTerm : ITerm
     def toFormula : IFormula
     def occurringConstants : collection.Seq[ConstantTerm]
@@ -196,8 +199,8 @@ class CCReader private (prog : Program,
   //////////////////////////////////////////////////////////////////////////////
 
   import IExpression._
-
-  private implicit def toRichType(typ : CCType) = new Object {
+  
+  implicit class RichType(typ : CCType) {
     import ModuloArithmetic._
 
     def toSort : Sort = arithmeticMode match {
@@ -270,7 +273,7 @@ class CCReader private (prog : Program,
 
   //////////////////////////////////////////////////////////////////////////////
 
-  private implicit def toRichExpr(expr : CCExpr) = new Object {
+  implicit class RichExpr(expr : CCExpr) {
     def mapTerm(m : ITerm => ITerm) : CCExpr =
       // TODO: type promotion when needed
       CCTerm(expr.typ cast m(expr.toTerm), expr.typ)
@@ -326,15 +329,14 @@ class CCReader private (prog : Program,
     localFrameStack push localVars.size
   private def popLocalFrame = {
     val newSize = localFrameStack.pop
-    localVars reduceToSize newSize
-    localVarTypes reduceToSize newSize
-    variableHints reduceToSize (globalVars.size + newSize)
+    CollectionUtils.reduceToSize(localVars, newSize)
+    CollectionUtils.reduceToSize(localVarTypes, newSize)
+    CollectionUtils.reduceToSize(variableHints, (globalVars.size + newSize))
   }
 
-
   private def allFormalVars : collection.Seq[ITerm] =
-    globalVars.toList ++ localVars.toList
-  private def allFormalVarTypes : collection.Seq[CCType] =
+    globalVars.map(t => (t: ITerm)).toList ++ localVars.toList
+  private def allFormalVarTypes : Seq[CCType] =
     globalVarTypes.toList ++ localVarTypes.toList
 
   private def allFormalExprs : collection.Seq[CCExpr] =
@@ -406,7 +408,7 @@ class CCReader private (prog : Program,
 
     val lastClauses = transitionClauses groupBy (_._1.body.head.pred)
 
-    clauses reduceToSize from
+    CollectionUtils.reduceToSize(clauses, from)
 
     def chainClauses(currentClause : Clause,
                      currentSync : ParametricEncoder.Synchronisation,
@@ -500,7 +502,7 @@ class CCReader private (prog : Program,
         hints
       }
 
-    predicateHints.put(res, allHints)
+    predicateHints.put(res, allHints.toSeq)
     res
   }
 
@@ -509,9 +511,7 @@ class CCReader private (prog : Program,
 
   //////////////////////////////////////////////////////////////////////////////
 
-  /** Implicit conversion so that we can get a Scala-like iterator from a
-    * a Java list */
-  import scala.collection.JavaConversions.{asScalaBuffer, asScalaIterator}
+  import scala.jdk.CollectionConverters._
 
   // Reserve two variables for time
   val GT = CCClock newConstant "_GT"
@@ -536,13 +536,13 @@ class CCReader private (prog : Program,
     atomicMode = true
     val globalVarSymex = Symex(null)
 
-    for (decl <- prog.asInstanceOf[Progr].listexternal_declaration_)
+    for (decl <- prog.asInstanceOf[Progr].listexternal_declaration_.asScala)
       decl match {
         case decl : Global =>
           collectVarDecls(decl.dec_, true, globalVarSymex)
 
         case decl : Chan =>
-          for (name <- decl.chan_def_.asInstanceOf[AChan].listcident_) {
+          for (name <- decl.chan_def_.asInstanceOf[AChan].listcident_.asScala) {
             if (channels contains name)
               throw new TranslationException(
                 "Channel " + name + " is already declared")
@@ -576,7 +576,7 @@ class CCReader private (prog : Program,
     // then translate the threads
     atomicMode = false
 
-    for (decl <- prog.asInstanceOf[Progr].listexternal_declaration_)
+    for (decl <- prog.asInstanceOf[Progr].listexternal_declaration_.asScala)
       decl match {
         case decl : Athread =>
           decl.thread_def_ match {
@@ -644,10 +644,10 @@ class CCReader private (prog : Program,
   private def collectVarDecls(dec : Dec,
                               global : Boolean,
                               values : Symex) : Unit = dec match {
-    case decl : Declarators if !isTypeDef(decl.listdeclaration_specifier_) => {
-      val typ = getType(decl.listdeclaration_specifier_)
+    case decl : Declarators if !isTypeDef(decl.listdeclaration_specifier_.asScala.toBuffer) => {
+      val typ = getType(decl.listdeclaration_specifier_.asScala.toBuffer)
 
-      for (initDecl <- decl.listinit_declarator_) {
+      for (initDecl <- decl.listinit_declarator_.asScala) {
         var isVariable = false
 
         initDecl match {
@@ -729,9 +729,9 @@ class CCReader private (prog : Program,
 
         if (isVariable) {
           // parse possible model checking hints
-          val hints :  collection.Seq[Abs_hint] = initDecl match {
-            case decl : HintDecl => decl.listabs_hint_
-            case decl : HintInitDecl => decl.listabs_hint_
+          val hints : collection.Seq[Abs_hint] = initDecl match {
+            case decl : HintDecl => decl.listabs_hint_.asScala.toBuffer
+            case decl : HintInitDecl => decl.listabs_hint_.asScala.toBuffer
             case _ => List()
           }
 
@@ -758,7 +758,7 @@ class CCReader private (prog : Program,
             val hintEls =
               for (hint <- hints;
                    cHint = hint.asInstanceOf[Comment_abs_hint];
-                   hint_clause <- cHint.listabs_hint_clause_;
+                   hint_clause <- cHint.listabs_hint_clause_.asScala;
                    if (hint_clause.isInstanceOf[Predicate_hint]);
                    pred_hint = hint_clause.asInstanceOf[Predicate_hint];
                    cost = pred_hint.maybe_cost_ match {
@@ -818,7 +818,7 @@ class CCReader private (prog : Program,
 
   private def getType(name : Type_name) : CCType = name match {
     case name : PlainType =>
-      getType(for (qual <- name.listspec_qual_.iterator;
+      getType(for (qual <- name.listspec_qual_.iterator.asScala;
                    if (qual.isInstanceOf[TypeSpec]))
               yield qual.asInstanceOf[TypeSpec].type_specifier_)
   }
@@ -869,7 +869,7 @@ class CCReader private (prog : Program,
 
   private def getType(functionDef : Function_def) : CCType =
     functionDef match {
-      case f : NewFunc    => getType(f.listdeclaration_specifier_)
+      case f : NewFunc    => getType(f.listdeclaration_specifier_.asScala.toBuffer)
       case _ : NewFuncInt => CCInt
     }
 
@@ -998,7 +998,7 @@ class CCReader private (prog : Program,
         if (varMapping forall { case (_, ind) => ind >= 0 }) {
           val defTerm =
             ConstantSubstVisitor(v.toTerm,
-                                 varMapping mapValues (IExpression.v(_)))
+                                 varMapping.mapValues(IExpression.v(_)).toMap)
           val rhs = IExpression.v(variableHints.size - 1)
 
           if (defTerm != rhs) {
@@ -1387,16 +1387,16 @@ class CCReader private (prog : Program,
         }
         case "assert" | "static_assert" | "__VERIFIER_assert"
                           if (exp.listexp_.size == 1) => {
-          assertProperty(atomicEval(exp.listexp_.head).toFormula)
+          assertProperty(atomicEval(exp.listexp_.asScala.head).toFormula)
           pushVal(CCFormula(true, CCInt))
         }
         case "assume" | "__VERIFIER_assume"
                           if (exp.listexp_.size == 1) => {
-          addGuard(atomicEval(exp.listexp_.head).toFormula)
+          addGuard(atomicEval(exp.listexp_.asScala.head).toFormula)
           pushVal(CCFormula(true, CCInt))
         }
         case cmd@("chan_send" | "chan_receive") if (exp.listexp_.size == 1) => {
-          val name = printer print exp.listexp_.head
+          val name = printer print exp.listexp_.asScala.head
           (channels get name) match {
             case Some(chan) => {
               val sync = cmd match {
@@ -1415,7 +1415,7 @@ class CCReader private (prog : Program,
           // then we inline the called function
 
           // evaluate the arguments
-          for (e <- exp.listexp_)
+          for (e <- exp.listexp_.asScala)
             evalHelp(e)
           outputClause
 
@@ -1423,7 +1423,7 @@ class CCReader private (prog : Program,
 
           // get rid of the local variables, which are later
           // replaced with the formal arguments
-          for (e <- exp.listexp_)
+          for (e <- exp.listexp_.asScala)
             popVal
 
           callFunctionInlining(name, functionEntry)
@@ -1674,18 +1674,18 @@ class CCReader private (prog : Program,
     declarator.asInstanceOf[NoPointer].direct_declarator_ match {
       case dec : NewFuncDec =>
         for (argDec <- dec.parameter_type_.asInstanceOf[AllSpec]
-                          .listparameter_declaration_)
+                          .listparameter_declaration_.asScala)
           argDec match {
             case argDec : OnlyType =>
               // ignore, a void argument implies that there are no arguments
             case argDec : TypeAndParam => {
-              val typ = getType(argDec.listdeclaration_specifier_)
+              val typ = getType(argDec.listdeclaration_specifier_.asScala.toBuffer)
               addLocalVar(typ newConstant getName(argDec.declarator_), typ)
             }
             case argDec : TypeHintAndParam => {
-              val typ = getType(argDec.listdeclaration_specifier_)
+              val typ = getType(argDec.listdeclaration_specifier_.asScala.toBuffer)
               addLocalVar(typ newConstant getName(argDec.declarator_), typ)
-              processHints(argDec.listabs_hint_)
+              processHints(argDec.listabs_hint_.asScala.toBuffer)
             }
 //            case argDec : Abstract =>
           }
@@ -1788,7 +1788,7 @@ class CCReader private (prog : Program,
 
       val offset = sortedBlocks.head._1
       var concernedClauses = clauses.slice(offset, clauses.size).toList
-      clauses reduceToSize offset
+      CollectionUtils.reduceToSize(clauses, offset)
 
       var curPos = offset
       for ((bstart, bend) <- sortedBlocks)
@@ -1881,7 +1881,7 @@ class CCReader private (prog : Program,
       case compound : ScompTwo => {
         pushLocalFrame
 
-        val stmsIt = ap.util.PeekIterator(compound.liststm_.iterator)
+        val stmsIt = ap.util.PeekIterator(compound.liststm_.iterator.asScala)
 
         // merge simple side-effect-free declarations with
         // the entry clause
@@ -1909,7 +1909,7 @@ class CCReader private (prog : Program,
         stm.dec_ match {
           case _ : NoDeclarator => true
           case dec : Declarators =>
-            dec.listinit_declarator_ forall {
+            dec.listinit_declarator_.asScala forall {
               case _ : OnlyDecl => true
               case _ : HintDecl => true
               case decl : InitDecl =>
@@ -1939,7 +1939,7 @@ class CCReader private (prog : Program,
         pushLocalFrame
 
         val stmsIt = compound.liststm_.iterator
-        translateStmSeq(stmsIt, entry, exit)
+        translateStmSeq(stmsIt.asScala, entry, exit)
 
         popLocalFrame
       }
@@ -2121,7 +2121,7 @@ class CCReader private (prog : Program,
             // add an assertion that we never try to jump to a case that
             // does not exist. TODO: add a parameter for this?
             selectorSymex assertProperty or(guards)
-          case Seq((_, target)) => {
+          case Seq((_, target: IAtom)) => {
             selectorSymex.saveState
             selectorSymex addGuard ~or(guards)
             selectorSymex outputClause target

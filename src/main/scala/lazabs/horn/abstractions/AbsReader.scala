@@ -41,6 +41,8 @@ import TplSpec.Absyn._
 
 import scala.collection.mutable.{ArrayBuffer, HashMap => MHashMap}
 
+import scala.jdk.CollectionConverters._
+
 object AbsReader {
 
   /**
@@ -143,9 +145,7 @@ class AbsReader(input : java.io.Reader) {
 
   private val printer = new PrettyPrinterNonStatic
 
-  /** Implicit conversion so that we can get a Scala-like iterator from a
-   * a Java list */
-  import scala.collection.JavaConversions.{asScalaBuffer, asScalaIterator}
+  import scala.jdk.CollectionConverters._
 
   /**
    * Translation of sorts to the SMT parser types.
@@ -167,7 +167,7 @@ class AbsReader(input : java.io.Reader) {
       case s : CompositeSort => s.identifier_ match {
         case id : SymbolIdent => (printer print id) match {
           case "Array" => {
-            val args = s.listsort_.toList map translateSort
+            val args = s.listsort_.asScala.toList map translateSort
             if (args.size < 2)
               throw new Exception(
                 "Expected at least two sort arguments in Array sort")
@@ -216,7 +216,7 @@ class AbsReader(input : java.io.Reader) {
       val predref = predrefC.asInstanceOf[PredRef]
       val predName = translateSymbolRef(predref.symbolref_)
 
-      for (variableC <- predref.listsortedvariablec_.reverseIterator) {
+      for (variableC <- predref.listsortedvariablec_.asScala.reverseIterator) {
         val variable = variableC.asInstanceOf[SortedVariable]
         val t = SMTParser2InputAbsy.BoundVariable(translateSort(variable.sort_))
         env.pushVar(printer print variable.symbol_, t)
@@ -246,12 +246,12 @@ class AbsReader(input : java.io.Reader) {
 
     val initialPredicates : List[(String, collection.Seq[IFormula])] =
     (for (predspec <-
-            specC.asInstanceOf[Spec].listpredspec_.iterator;
+            specC.asInstanceOf[Spec].listpredspec_.iterator.asScala;
           if (predspec.isInstanceOf[InitialPredicates]);
           initPreds = predspec.asInstanceOf[InitialPredicates]) yield {
        val (predName, varNum) = translatePredRef(initPreds.predrefc_)
 
-       val preds = (for (term <- initPreds.listterm_.iterator) yield {
+       val preds = (for (term <- initPreds.listterm_.iterator.asScala) yield {
          parseExpr(printer print term).asInstanceOf[IFormula]
        }).toList
 
@@ -268,14 +268,14 @@ class AbsReader(input : java.io.Reader) {
 
     val templateHints : List[(String, collection.Seq[VerifHintElement])] =
     (for (predspec <-
-            specC.asInstanceOf[Spec].listpredspec_.iterator;
+            specC.asInstanceOf[Spec].listpredspec_.iterator.asScala;
           if (predspec.isInstanceOf[Templates]);
           templates = predspec.asInstanceOf[Templates]) yield {
        val (predName, varNum) = translatePredRef(templates.predrefc_)
 
        val hints = new ArrayBuffer[VerifHintElement]
 
-       for (templatec <- templates.listtemplatec_)
+       for (templatec <- templates.listtemplatec_.asScala)
          templatec match {
            case template : TermTemplate => {
              val expr = parseExpr(printer print template.term_)

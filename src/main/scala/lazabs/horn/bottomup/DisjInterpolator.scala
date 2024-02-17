@@ -230,7 +230,7 @@ object DisjInterpolator {
       }
 
       def flag2Conj(f : IFormula) : Conjunction = {
-        implicit val _ = order
+        implicit val termOrder = order
         import TerForConvenience._
         f match {
           case IAtom(p, Seq()) => p(List())
@@ -968,7 +968,7 @@ object DisjInterpolator {
         if (headLit.predicate != FALSE)
           order = order extendPred pred
 
-        implicit val _ = order
+        implicit val termOrder = order
         import TerForConvenience._
         freshRelSyms.put(i, Atom(pred, for (c <- args) yield l(c), order))
       }

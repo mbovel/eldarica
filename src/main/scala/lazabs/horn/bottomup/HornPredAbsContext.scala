@@ -190,7 +190,7 @@ class HornPredAbsContextImpl[CC]
   if (useHashing)
     println("State hashing enabled")
 
-  implicit val sf = new SymbolFactory(theories)
+  implicit val sf: SymbolFactory = new SymbolFactory(theories)
 
   val relationSymbols = {
     val preds =
@@ -260,7 +260,7 @@ class HornPredAbsContextImpl[CC]
         (normClauses groupBy { c => c._1.body.size }).toList sortBy (_._1))
     println("   " + clauses.size + " clauses with " + num + " body literals")
 
-  val relationSymbolOccurrences = computeRSOccurrences
+  val relationSymbolOccurrences = computeRSOccurrences.toMap
 
   val goalSettings = {
     var gs = GoalSettings.DEFAULT
