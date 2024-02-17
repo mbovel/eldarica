@@ -53,8 +53,8 @@ object ParametricEncoder {
   case class  DiscreteTime(index : Int)                        extends TimeSpec
   case class  ContinuousTime(numIndex : Int, denomIndex : Int) extends TimeSpec
 
-  type Process = Seq[(HornClauses.Clause, Synchronisation)]
-  type ProcessSet = Seq[(Process, Replication)]
+  type Process = collection.Seq[(HornClauses.Clause, Synchronisation)]
+  type ProcessSet = collection.Seq[(Process, Replication)]
 
   def processPreds(processes : ProcessSet) : Set[IExpression.Predicate] =
     (for ((proc, _) <- processes.iterator;
@@ -82,13 +82,13 @@ object ParametricEncoder {
   }
 
   abstract sealed class Barrier(val name : String,
-                                val domains : Seq[Set[IExpression.Predicate]]) {
+                                val domains : collection.Seq[Set[IExpression.Predicate]]) {
     override def toString = name
     def filterDomains(remainingPreds : Set[IExpression.Predicate]) : Barrier
   }
 
   class SimpleBarrier(_name : String,
-                      _domains : Seq[Set[IExpression.Predicate]])
+                      _domains : collection.Seq[Set[IExpression.Predicate]])
     extends Barrier(_name, _domains) {
     def filterDomains(remainingPreds : Set[IExpression.Predicate])
                     : SimpleBarrier =
@@ -101,7 +101,7 @@ object ParametricEncoder {
    * which processes can synchronise on the same barriers.
    */
   class BarrierFamily(_name : String,
-                      _domains : Seq[Set[IExpression.Predicate]],
+                      _domains : collection.Seq[Set[IExpression.Predicate]],
                       val equivalentProcesses :
                         (ITerm, ITerm, ITerm, ITerm) => IFormula)
     extends Barrier(_name, _domains) {
@@ -118,10 +118,10 @@ object ParametricEncoder {
 
   case class System(processes : ParametricEncoder.ProcessSet,
                     globalVarNum : Int,
-                    backgroundAxioms : Option[Seq[ITerm] => IFormula],
+                    backgroundAxioms : Option[collection.Seq[ITerm] => IFormula],
                     timeSpec : ParametricEncoder.TimeSpec,
-                    timeInvariants : Seq[HornClauses.Clause],
-                    assertions : Seq[HornClauses.Clause],
+                    timeInvariants : collection.Seq[HornClauses.Clause],
+                    assertions : collection.Seq[HornClauses.Clause],
                     hints : VerificationHints = EmptyVerificationHints) {
 
     import HornClauses.Clause
@@ -200,7 +200,7 @@ object ParametricEncoder {
      * by replacing infinite processes with a finite number of
      * singleton processes
      */
-    def finitise(instanceNumbers : Seq[Option[Range]]) : System = {
+    def finitise(instanceNumbers : collection.Seq[Option[Range]]) : System = {
 
       assert(instanceNumbers.size == processes.size &&
              ((instanceNumbers.iterator zip processes.iterator) forall {
@@ -210,7 +210,7 @@ object ParametricEncoder {
               }))
 
       val newPredicateHints =
-        new MHashMap[IExpression.Predicate, Seq[VerifHintElement]]
+        new MHashMap[IExpression.Predicate, collection.Seq[VerifHintElement]]
 
       val predMappings =
         (for (((n, (process, _)), i) <-
@@ -470,7 +470,7 @@ object ParametricEncoder {
  * local variable represents a unique process id.
  */
 class ParametricEncoder(system : ParametricEncoder.System,
-                        invariants : Seq[Seq[Int]]) {
+                        invariants : collection.Seq[collection.Seq[Int]]) {
 
   import ParametricEncoder._
   import VerificationHints._
@@ -512,7 +512,7 @@ class ParametricEncoder(system : ParametricEncoder.System,
    * local atoms (with the predicates used in the orginal
    * system description).
    */
-  def decodeLocalStates(globalAtom : IAtom) : Seq[IAtom] = {
+  def decodeLocalStates(globalAtom : IAtom) : collection.Seq[IAtom] = {
     val IAtom(globalPred, allArgs) = globalAtom
     val globalArgs = allArgs take globalVarNum
     var localOffset = globalVarNum
@@ -526,16 +526,16 @@ class ParametricEncoder(system : ParametricEncoder.System,
 
   //////////////////////////////////////////////////////////////////////////////
 
-  def invPred(globalParams : Seq[ITerm],
-              localParams : Seq[(Predicate, Seq[ITerm])]) : IAtom = {
+  def invPred(globalParams : collection.Seq[ITerm],
+              localParams : collection.Seq[(Predicate, collection.Seq[ITerm])]) : IAtom = {
     val sortedLocalParams =
       localParams sortBy { case (x, _) => localPredRanking(x) }
     val params = globalParams ++ (sortedLocalParams map (_._2)).flatten
     IAtom(globalPreds((sortedLocalParams map (_._1)).toList), params)
   }
 
-  def groupIntoProcesses(localParams : Seq[(Predicate, Seq[ITerm])])
-                        : Seq[Seq[(Predicate, Seq[ITerm])]] = {
+  def groupIntoProcesses(localParams : collection.Seq[(Predicate, collection.Seq[ITerm])])
+                        : collection.Seq[collection.Seq[(Predicate, collection.Seq[ITerm])]] = {
     assert(compatiblePredicates(localParams map (_._1)))
     val predProcessGroupsMap = localParams groupBy {
       case (pred, _) => processIndex(pred)
@@ -546,7 +546,7 @@ class ParametricEncoder(system : ParametricEncoder.System,
   // do the given predicates belong to processes that can coexist in the system?
   // this is not the case if there are two predicates that belong to the same
   // singleton process
-  def compatiblePredicates(preds : Seq[Predicate]) = {
+  def compatiblePredicates(preds : collection.Seq[Predicate]) = {
     val predProcessGroupsMap = preds groupBy processIndex
     processes.iterator.zipWithIndex forall {
       case ((_, Singleton), i) =>
@@ -556,8 +556,8 @@ class ParametricEncoder(system : ParametricEncoder.System,
     }
   }
 
-  def allInvariants(globalParams : Seq[ITerm],
-                    localParams : Seq[(Predicate, Seq[ITerm])]) : List[IAtom] = {
+  def allInvariants(globalParams : collection.Seq[ITerm],
+                    localParams : collection.Seq[(Predicate, collection.Seq[ITerm])]) : List[IAtom] = {
     val predProcessGroups = groupIntoProcesses(localParams)
     (for (inv <- invariants.iterator;
           params <- genSubsequences(predProcessGroups, inv))
@@ -568,7 +568,7 @@ class ParametricEncoder(system : ParametricEncoder.System,
   // not all predicates can be covered by available invariants.
   // in this case extra predicates are added to make further
   // invariants available
-  def addExtraPreds(preds : Seq[Predicate]) : Iterator[List[Predicate]] = {
+  def addExtraPreds(preds : collection.Seq[Predicate]) : Iterator[List[Predicate]] = {
     val predProcessGroupsMap = preds groupBy processIndex
     val processNums =
       (for (i <- 0 until processes.size)
@@ -613,7 +613,7 @@ class ParametricEncoder(system : ParametricEncoder.System,
     (for ((s, j) <- globalVarSorts.iterator.zipWithIndex)
      yield i(s newConstant ("g_" + j))).toList
 
-  def freshParams(preds : Seq[Predicate]) =
+  def freshParams(preds : collection.Seq[Predicate]) =
     (for ((p, k) <- preds.iterator.zipWithIndex) yield {
        (p,
         (for ((s, j) <- (predArgumentSorts(p).iterator drop globalVarNum)
@@ -621,16 +621,16 @@ class ParametricEncoder(system : ParametricEncoder.System,
            yield i(s newConstant (p.name + "_" + k + "_" + j))).toList)
      }).toList
 
-  def distinctIds(localParams : Seq[(Predicate, Seq[ITerm])]) =
+  def distinctIds(localParams : collection.Seq[(Predicate, collection.Seq[ITerm])]) =
     and(for (params <- groupIntoProcesses(localParams).iterator)
         yield distinct(for ((_, Seq(id, _*)) <- params) yield id))
 
-  def timeAxioms(globalParams : Seq[ITerm]) : IFormula = timeSpec match {
+  def timeAxioms(globalParams : collection.Seq[ITerm]) : IFormula = timeSpec match {
     case ContinuousTime(_, denomIndex) => globalParams(denomIndex) > 0
     case _ => true
   }
 
-  def allAxioms(globalParams : Seq[ITerm]) : IFormula =
+  def allAxioms(globalParams : collection.Seq[ITerm]) : IFormula =
     timeAxioms(globalParams) &&& (backgroundAxioms match {
       case Some(fun) => fun(globalParams)
       case None      => true
@@ -1064,8 +1064,8 @@ class ParametricEncoder(system : ParametricEncoder.System,
 
   //////////////////////////////////////////////////////////////////////////////
 
-  private def compilePredicateHints(s : Seq[Predicate])
-                                   : Seq[VerifHintElement] = {
+  private def compilePredicateHints(s : collection.Seq[Predicate])
+                                   : collection.Seq[VerifHintElement] = {
     val res = new ArrayBuffer[VerifHintElement]
     var shift = 0
     for (lp <- s) {

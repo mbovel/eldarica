@@ -148,7 +148,7 @@ class PetriMain {
   
   val (places, transitions, initialValues, finalConfig) = {
     val places        = new LinkedHashSet[String]
-    val transitions   = new LinkedHashSet[(Seq[String], Seq[String])]
+    val transitions   = new LinkedHashSet[(collection.Seq[String], collection.Seq[String])]
     val initialValues = new MHashMap[String, Int]
     val finalValues   = new MHashMap[String, Int]
     var finalConfig : IFormula = null
@@ -259,7 +259,7 @@ class PetriMain {
 
   println("Computing control groups ...")
 
-  val controlSets : Seq[Seq[String]] = {
+  val controlSets : collection.Seq[collection.Seq[String]] = {
     val controlCandidates = new LinkedHashSet[String]
     controlCandidates ++= places
   
@@ -286,7 +286,7 @@ class PetriMain {
       else SimpleAPI.withProver { p =>
         import p._
     
-        val sets = new ArrayBuffer[Seq[String]]
+        val sets = new ArrayBuffer[collection.Seq[String]]
 
         try { withTimeout(15000) {
     
@@ -415,7 +415,7 @@ class PetriMain {
   print("Encoding as Horn clauses ... ")
 
   val invPredSeq = {
-    def controlStates(pls : List[Seq[String]])
+    def controlStates(pls : List[collection.Seq[String]])
                      : Iterator[List[String]] = pls match {
       case List() =>
         Iterator single List()

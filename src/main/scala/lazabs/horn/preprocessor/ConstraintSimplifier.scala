@@ -54,7 +54,7 @@ object ConstraintSimplifier {
         extends CollectingVisitor[Unit, IExpression] {
     def postVisit(t : IExpression,
                   arg : Unit,
-                  subres : Seq[IExpression]) : IExpression =
+                  subres : collection.Seq[IExpression]) : IExpression =
       (t update subres) match {
         case updatedT : ITerm =>
           (replacements get updatedT) match {
@@ -285,7 +285,7 @@ class ConstraintSimplifier extends HornPreprocessor {
    * Flatten nested function applications in the constraint by introducing
    * additional symbols.
    */
-  private def flattenConstraint(constraint : IFormula) : Seq[IFormula] = {
+  private def flattenConstraint(constraint : IFormula) : collection.Seq[IFormula] = {
     val flattener = new Flattener
     val conjuncts =
       LineariseVisitor(Transform2NNF(constraint), IBinJunctor.And)
@@ -310,7 +310,7 @@ class ConstraintSimplifier extends HornPreprocessor {
     }
 
     def postVisit(t : IExpression, extractFun : Boolean,
-                  subres : Seq[IExpression]) : IExpression =
+                  subres : collection.Seq[IExpression]) : IExpression =
       IExpression.updateAndSimplifyLazily(t, subres) match {
         case t : IFunApp if extractFun && ContainsSymbol.isClosed(t) =>
           extractedFuns.getOrElseUpdate(t, newConst(Sort sortOf t))
@@ -327,10 +327,10 @@ class ConstraintSimplifier extends HornPreprocessor {
    */
   private def inlineEquations(headSyms : scala.collection.Set[ConstantTerm],
                               body : List[IAtom],
-                              conjuncts : Seq[IFormula],
-                              persistentEqs : Seq[IFormula])
+                              conjuncts : collection.Seq[IFormula],
+                              persistentEqs : collection.Seq[IFormula])
                             : Option[(List[IAtom],
-                                      Seq[IFormula], Seq[IFormula])] = {
+                                      collection.Seq[IFormula], collection.Seq[IFormula])] = {
     val replacement      = new MHashMap[ConstantTerm, ITerm]
     val replacedConsts   = new MHashSet[ConstantTerm]
     val addPersistentEqs = new ArrayBuffer[IFormula]
@@ -432,9 +432,9 @@ class ConstraintSimplifier extends HornPreprocessor {
    */
   private def elimDisEquations(headSyms : scala.collection.Set[ConstantTerm],
                                body : List[IAtom],
-                               conjuncts : Seq[IFormula],
-                               persistentEqs : Seq[IFormula])
-                             : Option[Seq[IFormula]] = {
+                               conjuncts : collection.Seq[IFormula],
+                               persistentEqs : collection.Seq[IFormula])
+                             : Option[collection.Seq[IFormula]] = {
     val occurrenceNums = new MHashMap[ConstantTerm, Int]
 
     for (c <- headSyms)
@@ -514,8 +514,8 @@ class ConstraintSimplifier extends HornPreprocessor {
   /**
    * Apply congruence closure to function applications.
    */
-  private def congruenceClosure(conjuncts : Seq[IFormula])
-                               : Option[Seq[IFormula]] = {
+  private def congruenceClosure(conjuncts : collection.Seq[IFormula])
+                               : Option[collection.Seq[IFormula]] = {
     val funApps        = new MHashMap[ITerm, ITerm]
     val newConjuncts   = new ArrayBuffer[IFormula]
     val otherConjuncts = new ArrayBuffer[IFormula]
@@ -558,9 +558,9 @@ class ConstraintSimplifier extends HornPreprocessor {
   /**
    * Rewrite some cases of ADT expressions.
    */
-  private def adtRewriting(conjuncts : Seq[IFormula])
-                         : Option[Seq[IFormula]] = {
-    val ctors = new MHashMap[IConstant, (ADT, Int, Seq[ITerm])]
+  private def adtRewriting(conjuncts : collection.Seq[IFormula])
+                         : Option[collection.Seq[IFormula]] = {
+    val ctors = new MHashMap[IConstant, (ADT, Int, collection.Seq[ITerm])]
 
     val (ctorConjuncts, otherConjuncts) =
       conjuncts partition {
@@ -595,7 +595,7 @@ class ConstraintSimplifier extends HornPreprocessor {
       None
   }
 
-  private class ADTSimplifier(ctors : GMap[IConstant, (ADT, Int, Seq[ITerm])])
+  private class ADTSimplifier(ctors : GMap[IConstant, (ADT, Int, collection.Seq[ITerm])])
           extends CollectingVisitor[Unit, IExpression] {
     val sizeExpressions = new LinkedHashMap[ITerm, ITerm]
 
@@ -623,7 +623,7 @@ class ConstraintSimplifier extends HornPreprocessor {
       }
 
     def postVisit(t : IExpression, arg : Unit,
-                  subres : Seq[IExpression]) : IExpression = (t, subres) match {
+                  subres : collection.Seq[IExpression]) : IExpression = (t, subres) match {
 
       case (IFunApp(ADT.Selector(adt, ctorNum, selNum), _),
             Seq(c : IConstant)) =>
@@ -673,8 +673,8 @@ class ConstraintSimplifier extends HornPreprocessor {
   private def gcFunctionApplications(
                        headSyms : scala.collection.Set[ConstantTerm],
                        body : List[IAtom],
-                       conjuncts : Seq[IFormula])
-                     : Option[Seq[IFormula]] = {
+                       conjuncts : collection.Seq[IFormula])
+                     : Option[collection.Seq[IFormula]] = {
     val blockedConsts = new MHashSet[ConstantTerm]
     val defConsts     = new MHashSet[ConstantTerm]
 
@@ -725,7 +725,7 @@ class ConstraintSimplifier extends HornPreprocessor {
     val containsFunctions =
       !ContainsSymbol.isPresburger(constraint)
 
-    var persistentEqs : Seq[IFormula] = List()
+    var persistentEqs : collection.Seq[IFormula] = List()
 
     var changed = containsFunctions
     var cont    = true

@@ -37,15 +37,15 @@ object UppAst {
     val clocks: List[String], 
     val chans: List[String],
     val intVars: List[String],
-    val functions: Map[String,(String,String,List[Variable],Seq[HornClause])], // function_name -> (start_name, end_name, variables, horn_clauses)
-    val automata: Seq[UppAutomaton],
+    val functions: Map[String,(String,String,List[Variable],collection.Seq[HornClause])], // function_name -> (start_name, end_name, variables, horn_clauses)
+    val automata: collection.Seq[UppAutomaton],
     val automatonToNum: Map[String,Int]
   )
   case class UppAutomaton(
     val name: String,
     val localClocks: List[String],
     val localIntVars: List[String],
-    //val localFunctions: Map[String,(String,String,List[Variable],Seq[HornClause])], // function_name -> (start_name, end_name, variables, horn_clauses)
+    //val localFunctions: Map[String,(String,String,List[Variable],collection.Seq[HornClause])], // function_name -> (start_name, end_name, variables, horn_clauses)
     val initial: UppVertex,
     val errors: Set[UppVertex],
     val states: Set[UppVertex],

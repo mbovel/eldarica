@@ -48,7 +48,7 @@ import scala.collection.mutable.{LinkedHashSet, ArrayBuffer,
  * Compute loops and loop heads of the given set of clauses,
  * using a generalised version of the dominator relation.
  */
-class LoopDetector(clauses : Seq[HornClauses.Clause]) {
+class LoopDetector(clauses : collection.Seq[HornClauses.Clause]) {
 
   import IExpression._
   import HornClauses.Clause
@@ -264,7 +264,7 @@ abstract class AbstractDomain {
   def initial(arity : Int) : Element
 
   def join(a : Element, b : Element) : Element
-  def post(clause : Clause, inputs : Seq[Element]) : Element
+  def post(clause : Clause, inputs : collection.Seq[Element]) : Element
 
 }
 
@@ -301,7 +301,7 @@ object IdentityDomain extends AbstractDomain {
             }).toList)
   }
   
-  def post(clause : Clause, inputs : Seq[Element]) : Element = {
+  def post(clause : Clause, inputs : collection.Seq[Element]) : Element = {
     val Clause(IAtom(_, headArgs), body, _) = clause
     assert(inputs.size == body.size)
 
@@ -391,7 +391,7 @@ class StrideDomain(sizeBound : Int, p : SimpleAPI)
     ???
   }
 
-  def post(clause : Clause, inputs : Seq[Element]) : Element = {
+  def post(clause : Clause, inputs : collection.Seq[Element]) : Element = {
     val Clause(IAtom(_, headArgs), body, constraint) = clause
     assert(inputs.size == body.size)
 

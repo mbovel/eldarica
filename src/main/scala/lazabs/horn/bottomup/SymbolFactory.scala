@@ -50,7 +50,7 @@ object SymbolFactory {
   val SKOLEM_BATCH_SIZE_LIMIT = 1 << 16
 }
 
-  class SymbolFactory(theories : Seq[Theory]) {
+  class SymbolFactory(theories : collection.Seq[Theory]) {
     import HornClauses._
     import TerForConvenience._
     import SymbolFactory._
@@ -128,7 +128,7 @@ object SymbolFactory {
 
     def addSymbol(c : ConstantTerm) : Unit =
       addConstant(c)
-    def addSymbols(cs : Seq[ConstantTerm]) : Unit =
+    def addSymbols(cs : collection.Seq[ConstantTerm]) : Unit =
       cs foreach addConstant
     
     def reducer(assumptions : Conjunction) =
@@ -137,7 +137,7 @@ object SymbolFactory {
       reducer(Conjunction.TRUE)(c)
     
     def genConstants(prefix : String,
-                     num : Int, suffix : String) : Seq[ConstantTerm] = {
+                     num : Int, suffix : String) : collection.Seq[ConstantTerm] = {
       val res = for (i <- 0 until num)
                 yield new ConstantTerm(prefix + "_" + i + "_" + suffix)
       addSymbols(res)
@@ -145,15 +145,15 @@ object SymbolFactory {
     }
 
     def genConstants(prefix : String,
-                     sorts : Seq[Sort],
-                     suffix : String) : Seq[ConstantTerm] = {
+                     sorts : collection.Seq[Sort],
+                     suffix : String) : collection.Seq[ConstantTerm] = {
       val res = (for ((s, i) <- sorts.iterator.zipWithIndex)
                  yield s.newConstant(prefix + "_" + i + "_" + suffix)).toList
       addSymbols(res)
       res
     }
 
-    def duplicateConstants(cs : Seq[ConstantTerm]) = {
+    def duplicateConstants(cs : collection.Seq[ConstantTerm]) = {
       val res = for (c <- cs) yield c.clone
       addSymbols(res)
       res

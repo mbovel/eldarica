@@ -64,7 +64,7 @@ abstract class Symex[CC](iClauses:    Iterable[CC])(
   private val normClausesConvertedToUnitClauses =
     new MHashMap[NormClause, UnitClause]
 
-  val theories: Seq[Theory] = {
+  val theories: collection.Seq[Theory] = {
     val coll = new TheoryCollector
     coll addTheory ap.types.TypeTheory
     for (c <- iClauses)
@@ -97,7 +97,7 @@ abstract class Symex[CC](iClauses:    Iterable[CC])(
     (for (p <- preds) yield (p -> RelationSymbol(p))).toMap
 
   // translate clauses to internal form
-  val normClauses: Seq[(NormClause, CC)] = (
+  val normClauses: collection.Seq[(NormClause, CC)] = (
     for (c <- iClauses) yield {
       lazabs.GlobalParameters.get.timeoutChecker()
       (NormClause(c, p => relationSymbols(p)), c)
@@ -112,13 +112,13 @@ abstract class Symex[CC](iClauses:    Iterable[CC])(
   //for ((normClause, _) <- normClauses)
   //  originalLocalSymbols ++= normClause.localSymbols
 
-  val clausesWithRelationInBody: Map[RelationSymbol, Seq[NormClause]] =
+  val clausesWithRelationInBody: Map[RelationSymbol, collection.Seq[NormClause]] =
     (for (rel <- relationSymbols.values) yield {
       (rel,
        normClauses.filter(_._1.body.exists(brel => brel._1 == rel)).map(_._1))
     }).toMap
 
-  val clausesWithRelationInHead: Map[RelationSymbol, Seq[NormClause]] =
+  val clausesWithRelationInHead: Map[RelationSymbol, collection.Seq[NormClause]] =
     (for (rel <- relationSymbols.values) yield {
       (rel, normClauses.filter(_._1.head._1 == rel).map(_._1))
     }).toMap
@@ -146,7 +146,7 @@ abstract class Symex[CC](iClauses:    Iterable[CC])(
   // this must be done before we can use the symbol factory during resolution
   symex_sf.initialize(predicatesAndMaxOccurrences.toSet)
 
-  val (facts: Seq[UnitClause], factToNormClause: Map[UnitClause, NormClause]) = {
+  val (facts: collection.Seq[UnitClause], factToNormClause: Map[UnitClause, NormClause]) = {
     val (facts, factToNormClause) =
       (for ((normClause, _) <- normClauses
             if normClause.body.isEmpty && normClause.head._1.pred != HornClauses.FALSE)
@@ -157,7 +157,7 @@ abstract class Symex[CC](iClauses:    Iterable[CC])(
     (facts, factToNormClause.toMap)
   }
 
-  val (goals: Seq[UnitClause], goalToNormClause: Map[UnitClause, NormClause]) = {
+  val (goals: collection.Seq[UnitClause], goalToNormClause: Map[UnitClause, NormClause]) = {
     val (goals, goalToNormClause) =
       (for ((normClause, _) <- normClauses
             if normClause.head._1.pred == HornClauses.FALSE && normClause.body.length == 1)
@@ -173,7 +173,7 @@ abstract class Symex[CC](iClauses:    Iterable[CC])(
    * another electron. The sequence indices i of returned electrons correspond
    * to atoms at nucleus.body(i). Returns None if the search space is exhausted.
    */
-  def getClausesForResolution: Option[(NormClause, Seq[UnitClause])]
+  def getClausesForResolution: Option[(NormClause, collection.Seq[UnitClause])]
 
   /**
    * Applies hyper-resolution using nucleus and electrons and returns the
@@ -183,7 +183,7 @@ abstract class Symex[CC](iClauses:    Iterable[CC])(
    * @todo Move out of this class.
    */
   private def hyperResolve(nucleus:   NormClause,
-                           electrons: Seq[UnitClause]): UnitClause = {
+                           electrons: collection.Seq[UnitClause]): UnitClause = {
 
     assert(electrons.length == nucleus.body.length)
 
@@ -310,14 +310,14 @@ abstract class Symex[CC](iClauses:    Iterable[CC])(
 
   // methods handling derivation of useless clauses (merge?)
   def handleForwardSubsumption(nucleus:   NormClause,
-                               electrons: Seq[UnitClause]): Unit
+                               electrons: collection.Seq[UnitClause]): Unit
 
   def handleBackwardSubsumption(subsumed: Set[UnitClause]): Unit
 
   def handleNewUnitClause(clause: UnitClause): Unit
 
   def handleFalseConstraint(nucleus:   NormClause,
-                            electrons: Seq[UnitClause]): Unit
+                            electrons: collection.Seq[UnitClause]): Unit
 
   private def buildSolution(): Solution = {
     for ((pred, rs) <- relationSymbols if pred != HornClauses.FALSE)
@@ -382,7 +382,7 @@ abstract class Symex[CC](iClauses:    Iterable[CC])(
                         rs.arguments(occ).map(arg => comp.evalToTerm(arg)))
             }
           }
-          val subDags: Seq[Dag[(IAtom, CC)]] = {
+          val subDags: collection.Seq[Dag[(IAtom, CC)]] = {
             //if (electrons.length == childrenAtoms.length) {
             for ((electron, atom) <- electrons zip childrenAtoms)
               yield computeAtoms(atom, electron)

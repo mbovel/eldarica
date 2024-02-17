@@ -165,45 +165,45 @@ abstract class PrincessAPI {
   // Checking satisfiability of a formula
   
   def isSat(problem : IFormula,
-            constants : Seq[ConstantTerm],
-            booleanVars : Seq[Predicate]) : Boolean
+            constants : collection.Seq[ConstantTerm],
+            booleanVars : collection.Seq[Predicate]) : Boolean
 
-  def isSat(problem : IFormula, constants : Seq[ConstantTerm]) : Boolean =
+  def isSat(problem : IFormula, constants : collection.Seq[ConstantTerm]) : Boolean =
     isSat(problem, constants, List())
   
   //////////////////////////////////////////////////////////////////////////////
   // Constructing model of formulae
 
   def findModel(problem : IFormula,
-                constants : Seq[ConstantTerm]) : Option[IFormula]
+                constants : collection.Seq[ConstantTerm]) : Option[IFormula]
   
   //////////////////////////////////////////////////////////////////////////////
   // Eliminate quantifiers in a formula
   
-  def elimQuans(problem : IFormula, constants : Seq[ConstantTerm]) : IFormula
+  def elimQuans(problem : IFormula, constants : collection.Seq[ConstantTerm]) : IFormula
   
-  def dnfSimplify(f : IFormula, constants : Seq[ConstantTerm]) : IFormula
+  def dnfSimplify(f : IFormula, constants : collection.Seq[ConstantTerm]) : IFormula
 
   //////////////////////////////////////////////////////////////////////////////
   // Constructing interpolants of formulae
 
   def interpolate(problem : IFormula,
-                  constants : Seq[ConstantTerm],
+                  constants : collection.Seq[ConstantTerm],
                   partitions : List[IInterpolantSpec]) : Option[List[IFormula]]
 
   //////////////////////////////////////////////////////////////////////////////
   // Constructing tree interpolants
 
   def treeInterpolate(problem : Tree[IFormula],
-                      constants : Seq[ConstantTerm]) : Option[Tree[IFormula]] =
+                      constants : collection.Seq[ConstantTerm]) : Option[Tree[IFormula]] =
     treeInterpolate(problem, constants, List())
 
   def treeInterpolate(problem : Tree[IFormula],
-                      constants : Seq[ConstantTerm],
-                      booleanVars : Seq[Predicate]) : Option[Tree[IFormula]]
+                      constants : collection.Seq[ConstantTerm],
+                      booleanVars : collection.Seq[Predicate]) : Option[Tree[IFormula]]
 
   def treeInterpolate[L](problem : AndOrTree[L],
-                         constants : Seq[ConstantTerm]) : Option[Map[L, IFormula]]
+                         constants : collection.Seq[ConstantTerm]) : Option[Map[L, IFormula]]
 
 }
 
@@ -245,8 +245,8 @@ abstract class AbstractPrincessAPI extends PrincessAPI {
   // Checking satisfiability of a formula
 
   def isSat(problem : IFormula,
-            constants : Seq[ConstantTerm],
-            booleanVars : Seq[Predicate]) : Boolean =
+            constants : collection.Seq[ConstantTerm],
+            booleanVars : collection.Seq[Predicate]) : Boolean =
     SimpleAPI.withProver { p =>
       import p._
       addConstantsRaw(constants)
@@ -257,8 +257,8 @@ abstract class AbstractPrincessAPI extends PrincessAPI {
 
   /*
   def isSat(problem : IFormula,
-            constants : Seq[ConstantTerm],
-            booleanVars : Seq[Predicate]) : Boolean = {
+            constants : collection.Seq[ConstantTerm],
+            booleanVars : collection.Seq[Predicate]) : Boolean = {
 //    println("sat check: " + problem)
 //    print(".")
 
@@ -280,8 +280,8 @@ abstract class AbstractPrincessAPI extends PrincessAPI {
    */
 
   private def toInternal(problem : IFormula,
-                         constants : Seq[ConstantTerm],
-                         booleanVars : Seq[Predicate])
+                         constants : collection.Seq[ConstantTerm],
+                         booleanVars : collection.Seq[Predicate])
                         : (Conjunction, Signature) = {
     // signature of the problem
     val order = backgroundOrder extend constants extendPred booleanVars
@@ -312,7 +312,7 @@ abstract class AbstractPrincessAPI extends PrincessAPI {
   // Constructing model of formulae
 
   def findModel(problem : IFormula,
-                constants : Seq[ConstantTerm]) : Option[IFormula] = {
+                constants : collection.Seq[ConstantTerm]) : Option[IFormula] = {
     // signature of the problem
     val order = backgroundOrder extend constants
     val signature = Signature(constants.toSet, Set(), Set(), order)
@@ -356,7 +356,7 @@ abstract class AbstractPrincessAPI extends PrincessAPI {
   // handles Presburger formulae
   
   /*
-  def elimQuansX(f : IFormula, constants : Seq[ConstantTerm]) : IFormula = {
+  def elimQuansX(f : IFormula, constants : collection.Seq[ConstantTerm]) : IFormula = {
     val (intFormula, signature) = toInternal(f, constants, List())
     val order = signature.order
     
@@ -367,7 +367,7 @@ abstract class AbstractPrincessAPI extends PrincessAPI {
   }
    */
   
-  def elimQuans(f : IFormula, constants : Seq[ConstantTerm]) : IFormula =
+  def elimQuans(f : IFormula, constants : collection.Seq[ConstantTerm]) : IFormula =
     SimpleAPI.withProver { p =>
       p.addConstantsRaw(constants)
       p.simplify(f)
@@ -376,7 +376,7 @@ abstract class AbstractPrincessAPI extends PrincessAPI {
   //////////////////////////////////////////////////////////////////////////////
 
   /*
-  def dnfSimplify(f : IFormula, constants : Seq[ConstantTerm]) : IFormula = {
+  def dnfSimplify(f : IFormula, constants : collection.Seq[ConstantTerm]) : IFormula = {
     val (intFormula, signature) = toInternal(!f, constants, List())
     val order = signature.order
     
@@ -386,7 +386,7 @@ abstract class AbstractPrincessAPI extends PrincessAPI {
   }
    */
 
-  def dnfSimplify(f : IFormula, constants : Seq[ConstantTerm]) : IFormula =
+  def dnfSimplify(f : IFormula, constants : collection.Seq[ConstantTerm]) : IFormula =
     or(DNFConverter.qeDNF(f))
   
   //////////////////////////////////////////////////////////////////////////////
@@ -426,7 +426,7 @@ abstract class AbstractPrincessAPI extends PrincessAPI {
   }
 
   def interpolate(problem : IFormula,
-                  constants : Seq[ConstantTerm],
+                  constants : collection.Seq[ConstantTerm],
                   partitions : List[IInterpolantSpec]) : Option[List[IFormula]] = {
     // signature of the problem
     val order = backgroundOrder extend constants
@@ -542,8 +542,8 @@ abstract class AbstractPrincessAPI extends PrincessAPI {
   // Constructing tree interpolants
 
   def treeInterpolate(problem : Tree[IFormula],
-                      constants : Seq[ConstantTerm],
-                      booleanVars : Seq[Predicate]) : Option[Tree[IFormula]] = {
+                      constants : collection.Seq[ConstantTerm],
+                      booleanVars : collection.Seq[Predicate]) : Option[Tree[IFormula]] = {
 //    println("and-tree interpolation: " + problem)
 
     // signature of the problem
@@ -666,7 +666,7 @@ abstract class AbstractPrincessAPI extends PrincessAPI {
   }
 
   def treeInterpolate[L](problem : AndOrTree[L],
-                         constants : Seq[ConstantTerm]) : Option[Map[L, IFormula]] = {
+                         constants : collection.Seq[ConstantTerm]) : Option[Map[L, IFormula]] = {
 //    println("and/or-tree interpolation: " + problem)
 
     val booleanVars = new ArrayBuffer[Predicate]

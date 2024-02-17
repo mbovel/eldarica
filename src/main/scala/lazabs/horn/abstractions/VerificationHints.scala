@@ -35,7 +35,7 @@ import IExpression._
 import scala.collection.{Set => GSet}
 
 object VerificationHints {
-  def apply(hints : Map[IExpression.Predicate, Seq[VerifHintElement]]) =
+  def apply(hints : Map[IExpression.Predicate, collection.Seq[VerifHintElement]]) =
     new VerificationHints {
       val predicateHints = hints
     }
@@ -148,7 +148,7 @@ object VerificationHints {
   trait VerificationHints {
     import VerificationHints._
 
-    val predicateHints : Map[IExpression.Predicate, Seq[VerifHintElement]]
+    val predicateHints : Map[IExpression.Predicate, collection.Seq[VerifHintElement]]
 
     def isEmpty = predicateHints.isEmpty
 
@@ -181,13 +181,13 @@ object VerificationHints {
     }
 
     def addPredicateHints(
-          hints : Map[IExpression.Predicate, Seq[VerifHintElement]]) =
+          hints : Map[IExpression.Predicate, collection.Seq[VerifHintElement]]) =
       if (hints.isEmpty)
         this
       else
         VerificationHints(predicateHints ++ hints)
 
-    def toInitialPredicates : Map[IExpression.Predicate, Seq[IFormula]] =
+    def toInitialPredicates : Map[IExpression.Predicate, collection.Seq[IFormula]] =
       (for ((p, hints) <- predicateHints.iterator;
             remHints = for (VerifHintInitPred(f) <- hints) yield f;
             if !remHints.isEmpty)
@@ -215,14 +215,14 @@ object VerificationHints {
   object EmptyVerificationHints extends VerificationHints {
     import VerificationHints._
 
-    val predicateHints = Map[IExpression.Predicate, Seq[VerifHintElement]]()
+    val predicateHints = Map[IExpression.Predicate, collection.Seq[VerifHintElement]]()
     override def filterPredicates(
                    remainingPreds : GSet[IExpression.Predicate]) = this
-    override def toInitialPredicates : Map[IExpression.Predicate, Seq[IFormula]] =
+    override def toInitialPredicates : Map[IExpression.Predicate, collection.Seq[IFormula]] =
       Map()
   }
 
-  class InitPredicateVerificationHints(preds : Map[Predicate, Seq[IFormula]])
+  class InitPredicateVerificationHints(preds : Map[Predicate, collection.Seq[IFormula]])
         extends VerificationHints {
     import VerificationHints._
     val predicateHints = preds mapValues { l => l map (VerifHintInitPred(_)) }

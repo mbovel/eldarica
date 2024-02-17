@@ -70,8 +70,8 @@ class RelationSymbolPred(val rawPred : Conjunction,
   private val sf = rs.sf
   private val argConsts = rs.arguments.head
 
-  private def substMap(from : Seq[ConstantTerm],
-                       to : Seq[ConstantTerm])
+  private def substMap(from : collection.Seq[ConstantTerm],
+                       to : collection.Seq[ConstantTerm])
                      : Map[ConstantTerm, Term] =
     (for ((oriC, newC) <- from.iterator zip to.iterator)
      yield (oriC -> l(newC)(sf.order))).toMap

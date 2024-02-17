@@ -85,7 +85,7 @@ object UppReader {
       throw new Exception("Unsupported label in control flow graph " + lazabs.viewer.ScalaPrinter(l))
   }
   
-  def funcToHornCls(f: FunctionDefinition): (String,String,List[Variable],Seq[HornClause]) = f match {
+  def funcToHornCls(f: FunctionDefinition): (String,String,List[Variable],collection.Seq[HornClause]) = f match {
     case FunctionDefinition(funcName, params, t, body, None) =>
       val to = CFGVertex(FreshCFGStateId.apply) // the end state
       val (start,trans,_,vm) = MakeCFG.makeCFG(body,to,List(),List((globalIntVars.toSet ++ params.map(_.name)).map(Variable(_).stype(IntegerType()))))
@@ -237,7 +237,7 @@ object UppReader {
     val systems: NodeSeq = nseq \ "system"
     var clocks = List[String]()
     var channels = List[String]()
-    var globalFunctions = Map[String,(String,String,List[Variable],Seq[HornClause])]()
+    var globalFunctions = Map[String,(String,String,List[Variable],collection.Seq[HornClause])]()
 
     UppCParser((nseq \ "declaration").text).foreach{_ match {
       case VarDeclaration(cl, ClassType("clock"), _) => clocks ::= cl

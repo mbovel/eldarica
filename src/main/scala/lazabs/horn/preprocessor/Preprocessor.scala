@@ -44,7 +44,7 @@ object HornPreprocessor {
 
   type Solution          = Map[Predicate, IFormula]
   type CounterExample    = Dag[(IAtom, HornClauses.Clause)]
-  type Clauses           = Seq[HornClauses.Clause]
+  type Clauses           = collection.Seq[HornClauses.Clause]
   type VerificationHints = lazabs.horn.abstractions.VerificationHints
 
   import lazabs.horn.abstractions.VerificationHints._
@@ -122,7 +122,7 @@ object HornPreprocessor {
   /////////////////////////////////////////////////////////////////////////////
 
   object NameFactory {
-    def predNameFactory(clauses : Seq[HornClauses.Clause]) : NameFactory = {
+    def predNameFactory(clauses : collection.Seq[HornClauses.Clause]) : NameFactory = {
       val preds = HornClauses allPredicates clauses
       new NameFactory(preds map (_.name))
     }
@@ -178,7 +178,7 @@ object HornPreprocessor {
       parent.translate(preTranslate(cex))
   }
 
-  class ComposedBackTranslator(translators : Seq[BackTranslator])
+  class ComposedBackTranslator(translators : collection.Seq[BackTranslator])
         extends BackTranslator {
     def translate(solution : Solution) =
       (solution /: translators) { case (sol, t) => t translate sol }

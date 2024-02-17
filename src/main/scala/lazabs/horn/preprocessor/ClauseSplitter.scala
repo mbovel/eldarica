@@ -120,7 +120,7 @@ class ClauseSplitter extends HornPreprocessor {
     }
   }
 
-  def splitPosEquations(f : IFormula) : Seq[IFormula] = {
+  def splitPosEquations(f : IFormula) : collection.Seq[IFormula] = {
     import Sort.{:::, Numeric}
     val split =
       or(for (g <- LineariseVisitor(f, IBinJunctor.Or)) yield g match {

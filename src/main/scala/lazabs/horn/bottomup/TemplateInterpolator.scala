@@ -67,7 +67,7 @@ object TemplateInterpolator {
 
   def interpolatingPredicateGenCEXAbsUpp(absMap : Map[String, AbsLattice])
                                         (clauseDag : Dag[AndOrNode[NormClause, Unit]])
-                     : Either[Seq[(Predicate, Seq[Conjunction])],
+                     : Either[collection.Seq[(Predicate, collection.Seq[Conjunction])],
                               Dag[(IAtom, NormClause)]] =
     DagInterpolator.cexGuidedExpansion(DagInterpolator.stripOrNodes(clauseDag)) match {
       case Left(partialTree) => {
@@ -109,11 +109,11 @@ object TemplateInterpolator {
 
   private def abstractInterpolatingPredicateGen(
                 constraintGen : Tree[Either[NormClause, RelationSymbol]] =>
-                                Option[(Tree[Seq[ConstantTerm]],
-                                        Seq[(Tree[Conjunction], TermOrder)])],
+                                Option[(Tree[collection.Seq[ConstantTerm]],
+                                        collection.Seq[(Tree[Conjunction], TermOrder)])],
                 alwaysAddOrdinaryInterpolants : Boolean)
                 (clauseDag : Dag[AndOrNode[NormClause, Unit]])
-                     : Either[Seq[(Predicate, Seq[Conjunction])],
+                     : Either[collection.Seq[(Predicate, collection.Seq[Conjunction])],
                               Dag[(IAtom, NormClause)]] =
     DagInterpolator.cexGuidedExpansion(DagInterpolator.stripOrNodes(clauseDag)) match {
       case Left(partialTree) => {
@@ -164,7 +164,7 @@ object TemplateInterpolator {
    * Generate predicates using template-based tree interpolation
    */
   def interpolatingPredicateGenCEXAbs(clauseDag : Dag[AndOrNode[NormClause, Unit]])
-                     : Either[Seq[(Predicate, Seq[Conjunction])],
+                     : Either[collection.Seq[(Predicate, collection.Seq[Conjunction])],
                               Dag[(IAtom, NormClause)]] =
     DagInterpolator.cexGuidedExpansion(DagInterpolator.stripOrNodes(clauseDag)) match {
       case Left(partialTree) => {
@@ -211,10 +211,10 @@ object TemplateInterpolator {
   }  
 
   def exploreLattice(clauseTree : Tree[Either[NormClause, RelationSymbol]],
-                     decompositions : Seq[(List[Int], AbsLattice)],
+                     decompositions : collection.Seq[(List[Int], AbsLattice)],
                      timeout : Long)
-                    : ((Tree[Seq[ConstantTerm]],
-                             Seq[(Tree[Conjunction], TermOrder)]),
+                    : ((Tree[collection.Seq[ConstantTerm]],
+                             collection.Seq[(Tree[Conjunction], TermOrder)]),
                        ExplorationResult.Value) =
     SimpleAPI.withProver(enableAssert = lazabs.Main.assertions) { p =>
       import p._
@@ -224,15 +224,15 @@ object TemplateInterpolator {
       val (decompositionPoints, relAbstractions) = decompositions.unzip
  
       val decPointVocabulary =
-        new MHashMap[List[Int], (Seq[ConstantTerm], Seq[ConstantTerm], Seq[ConstantTerm])]
+        new MHashMap[List[Int], (collection.Seq[ConstantTerm], collection.Seq[ConstantTerm], collection.Seq[ConstantTerm])]
 
       val vocabularyTree = {
         var symNum = 0
 
         def vocHelp(path : List[Int],
                     t : Tree[Either[NormClause, RelationSymbol]])
-                   : Tree[Either[Seq[ConstantTerm],
-                                 (Seq[ConstantTerm], Seq[ConstantTerm], Seq[ConstantTerm])]] = {
+                   : Tree[Either[collection.Seq[ConstantTerm],
+                                 (collection.Seq[ConstantTerm], collection.Seq[ConstantTerm], collection.Seq[ConstantTerm])]] = {
         val Tree(c, children) = t
         val vocSyms = c match {
             case Left(NormClause(_, _, (rs, _))) if (decompositionPoints contains path) => {
@@ -369,14 +369,14 @@ object TemplateInterpolator {
 
   //////////////////////////////////////////////////////////////////////////////
 
-  private def getModVars(path : List[Int], newClauses : List[NormClause]) : Seq[Int] = {
+  private def getModVars(path : List[Int], newClauses : List[NormClause]) : collection.Seq[Int] = {
     SimpleAPI.withProver(enableAssert = lazabs.Main.assertions) { p =>
       import p._
 
       // First clause
       val hc = newClauses.head
 
-      var lastHeadSyms = Seq() : Seq[ConstantTerm]
+      var lastHeadSyms = Seq() : collection.Seq[ConstantTerm]
       implicit val order1 = order
     
       val initc = newClauses.head
@@ -445,10 +445,10 @@ object TemplateInterpolator {
 
 
   // returns loop paths 
-  private def getPath(clauseTree : Tree[Either[NormClause, RelationSymbol]]) : Seq[(List[Int], List[RelationSymbol])] =
+  private def getPath(clauseTree : Tree[Either[NormClause, RelationSymbol]]) : collection.Seq[(List[Int], List[RelationSymbol])] =
   {
     def search(path : List[Int], ids : List[RelationSymbol], 
-      t : Tree[Either[NormClause, RelationSymbol]]) : Seq[(List[Int], List[RelationSymbol])] = t match {
+      t : Tree[Either[NormClause, RelationSymbol]]) : collection.Seq[(List[Int], List[RelationSymbol])] = t match {
 
       case Tree(Left(NormClause(constr, body, (rel, _))), children) =>
 
@@ -604,11 +604,11 @@ object TemplateInterpolator {
   }
 
   private def buildZoneAbstraction( 
-       vocabularyTree : Tree[Either[Seq[ConstantTerm], (Seq[ConstantTerm], Seq[ConstantTerm], Seq[ConstantTerm])]], 
+       vocabularyTree : Tree[Either[collection.Seq[ConstantTerm], (collection.Seq[ConstantTerm], collection.Seq[ConstantTerm], collection.Seq[ConstantTerm])]], 
        modVars : List[Int],
-       xa : Seq[ITerm],
-       x : Seq[ITerm],
-       xb : Seq[ITerm]) : AbsLattice = {
+       xa : collection.Seq[ITerm],
+       x : collection.Seq[ITerm],
+       xb : collection.Seq[ITerm]) : AbsLattice = {
  
     val modInds = for( l <- modVars.combinations(2).toList) yield (l(0), l(1))
     //println("Size of xa, x, xb : " + xa.size + " -- " + " mod inds size is " + modInds.size + " mod ins = " + modInds )
@@ -633,12 +633,12 @@ object TemplateInterpolator {
                  clauseTree : Tree[Either[NormClause, RelationSymbol]],
                  absMap : Map[String, AbsLattice]
                )
-                    : Option[(Tree[Seq[ConstantTerm]],
-                              Seq[(Tree[Conjunction], TermOrder)])] = {
+                    : Option[(Tree[collection.Seq[ConstantTerm]],
+                              collection.Seq[(Tree[Conjunction], TermOrder)])] = {
 
 
     def firstOccurrences(path : List[Int], ids : Set[RelationSymbol],
-      t : Tree[Either[NormClause, RelationSymbol]]) : Seq[(List[Int], AbsLattice)] = t match {
+      t : Tree[Either[NormClause, RelationSymbol]]) : collection.Seq[(List[Int], AbsLattice)] = t match {
 
       case Tree(Left(NormClause(constr, body, (rel, _))), children) => {
         val subres = for ((c, i) <- children.zipWithIndex; 
@@ -773,8 +773,8 @@ object TemplateInterpolator {
                 absMap : AbstractionMap,
                 timeout : Long
               )
-              : Option[(Tree[Seq[ConstantTerm]],
-                        Seq[(Tree[Conjunction], TermOrder)])] = {
+              : Option[(Tree[collection.Seq[ConstantTerm]],
+                        collection.Seq[(Tree[Conjunction], TermOrder)])] = {
 
 /*    (for (c <- clauseTree) yield c match {
       case Left(NormClause(_, _, (rel, _))) => rel.pred.name
@@ -782,7 +782,7 @@ object TemplateInterpolator {
     }).prettyPrint */
 
     def firstOccurrences(path : List[Int], ids : Set[RelationSymbol],
-      t : Tree[Either[NormClause, RelationSymbol]]) : Seq[(List[Int], AbsLattice)] = t match {
+      t : Tree[Either[NormClause, RelationSymbol]]) : collection.Seq[(List[Int], AbsLattice)] = t match {
 
       case Tree(Left(NormClause(constr, body, (rel, _))), children) => {
         val subres = for ((c, i) <- children.zipWithIndex; 
@@ -883,7 +883,7 @@ object TemplateInterpolator {
     def getKthLoopHeadOccurrences(
              path : List[Int],
              t : Tree[Either[NormClause, RelationSymbol]])
-           : (Seq[(List[Int], AbsLattice)], List[Int]) = t match {
+           : (collection.Seq[(List[Int], AbsLattice)], List[Int]) = t match {
       case Tree(Left(NormClause(constr, body, (rel, _))), children) => {
         val subres = for ((c, i) <- children.zipWithIndex)
                      yield getKthLoopHeadOccurrences(i :: path, c)
@@ -945,8 +945,8 @@ object TemplateInterpolator {
 
 
   def createAbstractConstraintTrees(clauseTree : Tree[Either[NormClause, RelationSymbol]])
-                                   : Option[(Tree[Seq[ConstantTerm]],
-                                             Seq[(Tree[Conjunction], TermOrder)])] = {
+                                   : Option[(Tree[collection.Seq[ConstantTerm]],
+                                             collection.Seq[(Tree[Conjunction], TermOrder)])] = {
 
     val maxProdSize = 20
     val pathInfo = getPath(clauseTree) match {
@@ -1048,7 +1048,7 @@ object TemplateInterpolator {
 
   //////////////////////////////////////////////////////////////////////////////
 
-  def interpolatingPredicateGenCEXAbsPetri(allActions : Seq[List[Int]],
+  def interpolatingPredicateGenCEXAbsPetri(allActions : collection.Seq[List[Int]],
                                            accelerateSingleActions : Boolean,
                                            accelerateIncreasingCycles : Boolean,
                                            globalOrthogonalSpace : Boolean) = {
@@ -1136,8 +1136,8 @@ object TemplateInterpolator {
                 accelerateIncreasingCycles : Boolean,
                 clauseTree : Tree[Either[NormClause, RelationSymbol]]
               )
-              : Option[(Tree[Seq[ConstantTerm]],
-                        Seq[(Tree[Conjunction], TermOrder)])] = {
+              : Option[(Tree[collection.Seq[ConstantTerm]],
+                        collection.Seq[(Tree[Conjunction], TermOrder)])] = {
 
 /*    (for (c <- clauseTree) yield c match {
       case Left(NormClause(_, _, (rel, _))) => rel.pred.name
@@ -1150,7 +1150,7 @@ object TemplateInterpolator {
 
     ////////////////////////////////////////////////////////////////////////////
 
-    type Action = (Predicate, Seq[IdealInt], Predicate)
+    type Action = (Predicate, collection.Seq[IdealInt], Predicate)
 
     val actions : List[Action] =
       (for (Left(c@NormClause(constraint, Seq((preRS, _)), (postRS, _))) <-

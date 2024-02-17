@@ -68,7 +68,7 @@ object HornWrapper {
   }
 
   def verifySolution(fullSol : HornPreprocessor.Solution,
-                     unsimplifiedClauses : Seq[Clause]) : Unit = {
+                     unsimplifiedClauses : collection.Seq[Clause]) : Unit = {
           // verify correctness of the solution
           if (lazabs.Main.assertions) assert(SimpleAPI.withProver { p =>
             import p._
@@ -111,7 +111,7 @@ object HornWrapper {
   }
 
   def verifyCEX(fullCEX : HornPreprocessor.CounterExample,
-                unsimplifiedClauses : Seq[Clause]) : Unit = {
+                unsimplifiedClauses : collection.Seq[Clause]) : Unit = {
           // verify correctness of the counterexample
           if (lazabs.Main.assertions) assert(SimpleAPI.withProver { p =>
             import p._
@@ -145,14 +145,14 @@ object HornWrapper {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class HornWrapper(constraints  : Seq[HornClause], 
+class HornWrapper(constraints  : collection.Seq[HornClause], 
                   uppaalAbsMap : Option[Map[String, AbsLattice]],
                   lbe          : Boolean,
                   disjunctive  : Boolean) {
 
   import HornWrapper.ResultType
 
-  def printClauses(cs : Seq[Clause]) = {
+  def printClauses(cs : collection.Seq[Clause]) = {
     for (c <- cs) {
       println(c);
     }
@@ -220,9 +220,9 @@ class HornWrapper(constraints  : Seq[HornClause],
 
   //////////////////////////////////////////////////////////////////////////////
 
-  def preprocessClauses(clauses : Seq[Clause],
+  def preprocessClauses(clauses : collection.Seq[Clause],
                         hints   : VerificationHints)
-                                :(Seq[Clause],
+                                :(collection.Seq[Clause],
                                   VerificationHints,
                                   BackTranslator) = {
     val (simplifiedClauses, simpPreHints, backTranslator) =
@@ -282,7 +282,7 @@ class HornWrapper(constraints  : Seq[HornClause],
 
   //////////////////////////////////////////////////////////////////////////////
 
-  def printMonolithic(converted : Seq[Clause]) : Unit =
+  def printMonolithic(converted : collection.Seq[Clause]) : Unit =
       if (converted forall { case Clause(_, body, _) => body.size <= 1 }) {
         Console.err.println("Clauses are linear; printing monolithic form")
         
@@ -356,7 +356,7 @@ class HornWrapper(constraints  : Seq[HornClause],
 
   //////////////////////////////////////////////////////////////////////////////
 
-  private def getSymex(clauses : Seq[Clause]) : Option[Symex[Clause]] = {
+  private def getSymex(clauses : collection.Seq[Clause]) : Option[Symex[Clause]] = {
     val symexDepth = GlobalParameters.get.symexMaxDepth
     GlobalParameters.get.symexEngine match {
       case GlobalParameters.SymexEngine.DepthFirstForward   =>
@@ -428,8 +428,8 @@ class HornWrapper(constraints  : Seq[HornClause],
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class InnerHornWrapper(unsimplifiedClauses : Seq[Clause],
-                       simplifiedClauses : Seq[Clause],
+class InnerHornWrapper(unsimplifiedClauses : collection.Seq[Clause],
+                       simplifiedClauses : collection.Seq[Clause],
                        simpHints : VerificationHints,
                        preprocBackTranslator : BackTranslator,
                        disjunctive : Boolean,
@@ -630,9 +630,9 @@ class HornTranslator {
     
     val localVariableNum = freeVariables.size     
        
-    def iInstantiateConstraint(headArguments : Seq[ConstantTerm],
-                                 bodyArguments: Seq[Seq[ConstantTerm]],
-                                 localVariables : Seq[ConstantTerm]) : IFormula = {
+    def iInstantiateConstraint(headArguments : collection.Seq[ConstantTerm],
+                                 bodyArguments: collection.Seq[collection.Seq[ConstantTerm]],
+                                 localVariables : collection.Seq[ConstantTerm]) : IFormula = {
 
       //println("This is the clause: " + lazabs.viewer.HornPrinter.printDebug(h))
       //println("This is the head arguments: " + headArguments + " and the body arguments: " + bodyArguments + " and the local arguments: " + localVariables)
@@ -651,7 +651,7 @@ class HornTranslator {
     override def toString = lazabs.viewer.HornPrinter.printDebug(h)
   }
 
-  def horn2Eldarica(constraints: Seq[Clause]): Seq[HornClause] = {
+  def horn2Eldarica(constraints: collection.Seq[Clause]): collection.Seq[HornClause] = {
     var varMap = Map[ConstantTerm,String]().empty
     var xcl = 0
     var x = 0

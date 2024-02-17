@@ -90,14 +90,14 @@ object Accelerator extends HornPreprocessor {
            }).toMap
         }
 
-      private def expandClause(cycle : Seq[Clause], head : IAtom, body : IAtom)
+      private def expandClause(cycle : collection.Seq[Clause], head : IAtom, body : IAtom)
                               (implicit p : SimpleAPI) : CounterExample = {
         import p._
         scope {
           assert(cycle.size == 1) // TODO
 
           val finalState = body.args
-          val states = new ArrayBuffer[Seq[ITerm]]
+          val states = new ArrayBuffer[collection.Seq[ITerm]]
           states += head.args
 
           def addN(n : Int) : Unit =

@@ -77,10 +77,10 @@ object NtsHorn {
   /**
    * Gets an Nts and generates the corresponding horn constraints 
    */
-  def apply(initNts: Nts): Seq[HornClause] = {
+  def apply(initNts: Nts): collection.Seq[HornClause] = {
     val nts = unifyFinalStates(initNts)
     val systemGlobalVars = nts.globalVars.filter(v => v.name != "sc_tid")
-    var result: Seq[HornClause] = List()
+    var result: collection.Seq[HornClause] = List()
     nts.systems.foreach {system =>
       val variables = system.vars  // initialize variables to the variables defined in the subsystem
       system.transitions.foreach(nt => {

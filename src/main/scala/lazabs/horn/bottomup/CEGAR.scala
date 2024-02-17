@@ -48,12 +48,12 @@ import scala.util.Sorting
 
 object CEGAR {
 
-  case class AbstractEdge(from : Seq[AbstractState], to : AbstractState,
+  case class AbstractEdge(from : collection.Seq[AbstractState], to : AbstractState,
                           clause : NormClause, assumptions : Conjunction) {
     override def toString = "<" + (from mkString ", ") + "> -> " + to + ", " + clause
   }
 
-  case class Counterexample(from : Seq[AbstractState], clause : NormClause)
+  case class Counterexample(from : collection.Seq[AbstractState], clause : NormClause)
              extends Exception("Predicate abstraction counterexample")
 
   object CounterexampleMethod extends Enumeration {
@@ -73,7 +73,7 @@ class CEGAR[CC]
            (context : HornPredAbsContext[CC],
             predStore : PredicateStore[CC],
             predicateGenerator : Dag[AndOrNode[NormClause, Unit]] =>
-                                    Either[Seq[(Predicate, Seq[Conjunction])],
+                                    Either[collection.Seq[(Predicate, collection.Seq[Conjunction])],
                                            Dag[(IAtom, NormClause)]],
             counterexampleMethod : CEGAR.CounterexampleMethod.Value =
               CEGAR.CounterexampleMethod.FirstBestShortest)
@@ -111,7 +111,7 @@ class CEGAR[CC]
 
   // Expansions that have been postponed due to backwards subsumption
   val postponedExpansions =
-    new ArrayBuffer[(Seq[AbstractState], NormClause, Conjunction, nextToProcess.TimeType)]
+    new ArrayBuffer[(collection.Seq[AbstractState], NormClause, Conjunction, nextToProcess.TimeType)]
 
   // seed the ARG construction using the clauses with empty bodies (facts)
   for ((clause@NormClause(constraint, Seq(), _), _) <- normClauses)
@@ -369,7 +369,7 @@ class CEGAR[CC]
 
   //////////////////////////////////////////////////////////////////////////////
 
-  def addPredicates(preds : Seq[(Predicate, Seq[Conjunction])],
+  def addPredicates(preds : collection.Seq[(Predicate, collection.Seq[Conjunction])],
                     expansion : nextToProcess.Expansion) : Boolean = {
     val predsToAdd = preparePredicates(preds)
 
@@ -487,7 +487,7 @@ class CEGAR[CC]
 
     for ((clause, occ, index) <- relationSymbolOccurrences(rs)) {
 
-      val byStates : Array[Seq[AbstractState]] =
+      val byStates : Array[collection.Seq[AbstractState]] =
         (for (((bodyRs, _), ind) <- clause.body.iterator.zipWithIndex)
          yield ind match {
            case `index` =>
@@ -531,7 +531,7 @@ class CEGAR[CC]
                         initialAssumptions : Conjunction,
                         clause : NormClause,
                         fixedIndex : Int, occ : Int,
-                        byStates : Array[Seq[AbstractState]]) : Unit = {
+                        byStates : Array[collection.Seq[AbstractState]]) : Unit = {
     import TerForConvenience._
     implicit val _ = clause.order
 
@@ -563,7 +563,7 @@ class CEGAR[CC]
                            initialAssumptions : Conjunction,
                            clause : NormClause,
                            fixedIndex : Int, occ : Int,
-                           byStates : Array[Seq[AbstractState]]) : Unit = {
+                           byStates : Array[collection.Seq[AbstractState]]) : Unit = {
     import TerForConvenience._
     implicit val _ = clause.order
 
@@ -687,7 +687,7 @@ class CEGAR[CC]
                         initialAssumptions : Conjunction,
                         clause : NormClause,
                         fixedIndex : Int, fixedOcc : Int,
-                        combinationsDone : MHashSet[(Seq[AbstractState], NormClause)])
+                        combinationsDone : MHashSet[(collection.Seq[AbstractState], NormClause)])
                        : Unit = inferenceAPIProver.scope {
     val p = inferenceAPIProver
     import p._
@@ -803,7 +803,7 @@ class CEGAR[CC]
   }
 
   def genEdge(clause : NormClause,
-              from : Seq[AbstractState], assumptions : Conjunction) = {
+              from : collection.Seq[AbstractState], assumptions : Conjunction) = {
     val startTime = System.currentTimeMillis
     lazy val prover = emptyProver.assert(assumptions, clause.order)
 
@@ -865,7 +865,7 @@ class CEGAR[CC]
   
   //////////////////////////////////////////////////////////////////////////////
   
-  def extractCounterexample(from : Seq[AbstractState], clause : NormClause)
+  def extractCounterexample(from : collection.Seq[AbstractState], clause : NormClause)
                            : Dag[AndOrNode[NormClause, Unit]] = {
     // find minimal paths to reach the abstract states
     val distances = new MHashMap[AbstractState, Int]

@@ -63,7 +63,7 @@ object HornUpp {
   /**
    * returns all the functions 
    */
-  /*def allFunctions(uppaal: Uppaal): Seq[HornClause] = {
+  /*def allFunctions(uppaal: Uppaal): collection.Seq[HornClause] = {
     (uppaal.globalFunctions.values.map(_._4).flatten ++ uppaal.automata.map(aut => aut.localFunctions.values.map(_._4).flatten).flatten).toSeq
   }*/
   
@@ -333,7 +333,7 @@ object HornUpp {
   }
 
   
-  def initCls(uppaal: Uppaal): Seq[HornClause] = uppaal.automata.map{ aut =>
+  def initCls(uppaal: Uppaal): collection.Seq[HornClause] = uppaal.automata.map{ aut =>
     autInitClause(uppaal, aut)
   }
   
@@ -341,7 +341,7 @@ object HornUpp {
   /**
    * clauses corresponding to assertions
    */
-  def assertCls(uppaal: Uppaal): Seq[HornClause] = uppaal.automata.map{ aut =>
+  def assertCls(uppaal: Uppaal): collection.Seq[HornClause] = uppaal.automata.map{ aut =>
       aut.errors.map{ errState =>
         HornClause(Interp(BoolConst(false)),
           uppaal.automata.map(automaton => 
@@ -361,7 +361,7 @@ object HornUpp {
   /**
    * local transitions of an automaton
    */
-  def autLocalCls(uppaal: Uppaal, aut: UppAutomaton) : Seq[HornClause] = aut.states.map{ vertex =>
+  def autLocalCls(uppaal: Uppaal, aut: UppAutomaton) : collection.Seq[HornClause] = aut.states.map{ vertex =>
       aut.transitions.getOrElse(vertex,Set()).map{ _ match {
         case UppTransition(dest, None, assign, guard) => // local transitions
           val (clockAssign,dataAssign) = separateDataClock(assign,uppaal.clocks)
@@ -384,10 +384,10 @@ object HornUpp {
   /**
    * local transitions of all the automata in the system
    */
-  def localCls(uppaal: Uppaal): Seq[HornClause] = uppaal.automata.map{ aut => autLocalCls(uppaal, aut)}.flatten
+  def localCls(uppaal: Uppaal): collection.Seq[HornClause] = uppaal.automata.map{ aut => autLocalCls(uppaal, aut)}.flatten
 
   
-  def individualClauses(uppaal: Uppaal, toAbs: Boolean = false): (Seq[HornClause], collection.immutable.Map[String, AbsLattice]) = {
+  def individualClauses(uppaal: Uppaal, toAbs: Boolean = false): (collection.Seq[HornClause], collection.immutable.Map[String, AbsLattice]) = {
     //############# different type of Horn clauses #############     
     var delayCls      = List[HornClause]()        //  delay clauses
     var invariantCls  = List[HornClause]()        //  invariant clauses

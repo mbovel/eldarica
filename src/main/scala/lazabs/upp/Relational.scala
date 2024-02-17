@@ -103,7 +103,7 @@ object Relational {
 
       //println(lazabs.viewer.HornPrinter.printDebug(init(uppaal,aut)))
 
-      val communicationCls: Seq[(HornClauses.Clause, Synchronisation)] = (aut.states.map{ vertex => 
+      val communicationCls: collection.Seq[(HornClauses.Clause, Synchronisation)] = (aut.states.map{ vertex => 
         aut.transitions.getOrElse(vertex,Set()).map{ _ match {
 
           case UppTransition(dest, Some(sync), assign, guard) => // local transitions
@@ -136,7 +136,7 @@ object Relational {
       }}.flatten.toList
       }.toList.flatten)
 
-      val localCls: Seq[(HornClauses.Clause, Synchronisation)] = { 
+      val localCls: collection.Seq[(HornClauses.Clause, Synchronisation)] = { 
         val l = autLocalCls(uppGlobal,aut)
         if(log) println("Local Transition: " + l.map(lazabs.viewer.HornPrinter.printDebug(_)).mkString("\n"))
         (l.map(cl => (transform(adjustParams(cl,uppaal,aut)),ParametricEncoder.NoSync)))
@@ -153,7 +153,7 @@ object Relational {
     }  // aut
     }
    
-    val timeInvs: Seq[HornClause] = uppaal.automata.map{aut => aut.invariants.map {inv =>
+    val timeInvs: collection.Seq[HornClause] = uppaal.automata.map{aut => aut.invariants.map {inv =>
       val uppGlobal = uppaal.copy(
         clocks  = uppaal.clocks  ++ aut.localClocks,
         intVars = uppaal.intVars ++ aut.localIntVars
@@ -178,7 +178,7 @@ object Relational {
       )
     }}.flatten
 
-    val assertions: Seq[HornClause] = uppaal.automata.map{aut =>
+    val assertions: collection.Seq[HornClause] = uppaal.automata.map{aut =>
         aut.errors.map{ errState =>
         HornClause(Interp(BoolConst(false)),
           List(
@@ -220,10 +220,10 @@ object Relational {
 /*
 ParametricEncoder(system : ParametricEncoder.System,
                   globalVarNum : Int,
-                  backgroundAxioms : Option[Seq[ITerm] => IFormula],
+                  backgroundAxioms : Option[collection.Seq[ITerm] => IFormula],
                   timeSpec : ParametricEncoder.TimeSpec,
-                  timeInvariants : Seq[HornClauses.Clause],
-                  assertions : Seq[HornClauses.Clause],
-                  invariants : Seq[Seq[Int]]
+                  timeInvariants : collection.Seq[HornClauses.Clause],
+                  assertions : collection.Seq[HornClauses.Clause],
+                  invariants : collection.Seq[collection.Seq[Int]]
 )
 */

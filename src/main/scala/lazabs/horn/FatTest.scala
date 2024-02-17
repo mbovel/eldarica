@@ -44,7 +44,7 @@ object FatTest {
   
   def apply(directory: String) = {
     val files = recursiveListFiles(new File(directory)).filter(file => file.getName.endsWith("smt2"))
-    val allClauses : List[(Seq[HornClause],String)] = files.map{ file =>
+    val allClauses : List[(collection.Seq[HornClause],String)] = files.map{ file =>
       (lazabs.horn.parser.HornReader.fromSMT(file.getPath()),file.getName())
     }.toList
     if(allClauses.size != 0) {
@@ -56,7 +56,7 @@ object FatTest {
       allClauses.foreach{ clauseSet =>
         var timeStart = System.currentTimeMillis
 
-        /*HornWrapper(constraints: Seq[HornClause],
+        /*HornWrapper(constraints: collection.Seq[HornClause],
          * absMap: Option[Map[String, AbsLattice]],
          * lbe: Boolean,
          * log : Boolean,

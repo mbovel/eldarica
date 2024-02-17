@@ -157,7 +157,7 @@ object CCReader {
   private abstract sealed class CCExpr(val typ : CCType) {
     def toTerm : ITerm
     def toFormula : IFormula
-    def occurringConstants : Seq[ConstantTerm]
+    def occurringConstants : collection.Seq[ConstantTerm]
   }
   private case class CCTerm(t : ITerm, _typ : CCType)
                extends CCExpr(_typ) {
@@ -166,7 +166,7 @@ object CCReader {
       case IIntLit(value) => !value.isZero
       case t =>              !eqZero(t)
     }
-    def occurringConstants : Seq[ConstantTerm] =
+    def occurringConstants : collection.Seq[ConstantTerm] =
       SymbolCollector constantsSorted t
   }
   private case class CCFormula(f : IFormula, _typ : CCType)
@@ -177,7 +177,7 @@ object CCReader {
       case f =>               ite(f, 1, 0)
     }
     def toFormula : IFormula = f
-    def occurringConstants : Seq[ConstantTerm] =
+    def occurringConstants : collection.Seq[ConstantTerm] =
       SymbolCollector constantsSorted f
   }
 }
@@ -331,17 +331,18 @@ class CCReader private (prog : Program,
     variableHints reduceToSize (globalVars.size + newSize)
   }
 
-  private def allFormalVars : Seq[ITerm] =
+
+  private def allFormalVars : collection.Seq[ITerm] =
     globalVars.toList ++ localVars.toList
-  private def allFormalVarTypes : Seq[CCType] =
+  private def allFormalVarTypes : collection.Seq[CCType] =
     globalVarTypes.toList ++ localVarTypes.toList
 
-  private def allFormalExprs : Seq[CCExpr] =
+  private def allFormalExprs : collection.Seq[CCExpr] =
     ((for ((v, t) <- globalVars.iterator zip globalVarTypes.iterator)
       yield CCTerm(v, t)) ++
      (for ((v, t) <- localVars.iterator zip localVarTypes.iterator)
       yield CCTerm(v, t))).toList
-  private def allVarInits : Seq[ITerm] =
+  private def allVarInits : collection.Seq[ITerm] =
     (globalVarsInit.toList map (_.toTerm)) ++ (localVars.toList map (i(_)))
 
   private def freeFromGlobal(t : IExpression) : Boolean =
@@ -356,7 +357,7 @@ class CCReader private (prog : Program,
   }
 
   private val variableHints =
-    new ArrayBuffer[Seq[VerificationHints.VerifHintElement]]
+    new ArrayBuffer[collection.Seq[VerificationHints.VerifHintElement]]
   private var usingInitialPredicates = false
 
   //////////////////////////////////////////////////////////////////////////////
@@ -504,7 +505,7 @@ class CCReader private (prog : Program,
   }
 
   private val predicateHints =
-    new MHashMap[Predicate, Seq[VerificationHints.VerifHintElement]]
+    new MHashMap[Predicate, collection.Seq[VerificationHints.VerifHintElement]]
 
   //////////////////////////////////////////////////////////////////////////////
 
@@ -728,7 +729,7 @@ class CCReader private (prog : Program,
 
         if (isVariable) {
           // parse possible model checking hints
-          val hints : Seq[Abs_hint] = initDecl match {
+          val hints :  collection.Seq[Abs_hint] = initDecl match {
             case decl : HintDecl => decl.listabs_hint_
             case decl : HintInitDecl => decl.listabs_hint_
             case _ => List()
@@ -742,7 +743,7 @@ class CCReader private (prog : Program,
       // nothing
   }
 
-  private def processHints(hints : Seq[Abs_hint]) : Unit =
+  private def processHints(hints : collection.Seq[Abs_hint]) : Unit =
           if (!hints.isEmpty) {
             import VerificationHints._
 
@@ -802,7 +803,7 @@ class CCReader private (prog : Program,
     case dec : OldFuncDec => getName(dec.direct_declarator_)
   }
 
-  private def isTypeDef(specs : Seq[Declaration_specifier]) : Boolean =
+  private def isTypeDef(specs : collection.Seq[Declaration_specifier]) : Boolean =
     specs exists {
       case spec : Storage =>
         spec.storage_class_specifier_.isInstanceOf[MyType]
@@ -810,7 +811,7 @@ class CCReader private (prog : Program,
         false
     }
 
-  private def getType(specs : Seq[Declaration_specifier]) : CCType =
+  private def getType(specs : collection.Seq[Declaration_specifier]) : CCType =
     getType(for (specifier <- specs.iterator;
                  if (specifier.isInstanceOf[Type]))
             yield specifier.asInstanceOf[Type].type_specifier_)
@@ -924,7 +925,7 @@ class CCReader private (prog : Program,
     }
   }
 
-  private def atom(pred : Predicate, args : Seq[ITerm]) =
+  private def atom(pred : Predicate, args : collection.Seq[ITerm]) =
     IAtom(pred, args take pred.arity)
 
   private class Symex private (oriInitPred : Predicate,
@@ -946,7 +947,7 @@ class CCReader private (prog : Program,
         atom(oriInitPred, allFormalVars)
     private def initPred = initAtom.pred
 
-    private val savedStates = new Stack[(IAtom, Seq[CCExpr], IFormula, Boolean)]
+    private val savedStates = new Stack[(IAtom, collection.Seq[CCExpr], IFormula, Boolean)]
     def saveState =
       savedStates push ((initAtom, values.toList, guard, touchedGlobalState))
     def restoreState = {
@@ -1085,9 +1086,9 @@ class CCReader private (prog : Program,
         touchedGlobalState || ind < globalVars.size || !freeFromGlobal(t)
     }
 
-    def getValues : Seq[CCExpr] =
+    def getValues : collection.Seq[CCExpr] =
       values.toList
-    def getValuesAsTerms : Seq[ITerm] =
+    def getValuesAsTerms : collection.Seq[ITerm] =
       for (expr <- values.toList) yield expr.toTerm
 
     def asAtom(pred : Predicate) = atom(pred, getValuesAsTerms)
@@ -1124,7 +1125,7 @@ class CCReader private (prog : Program,
       res
     }
 
-    def evalList(exp : Exp) : Seq[CCExpr] = {
+    def evalList(exp : Exp) : collection.Seq[CCExpr] = {
       val res = new ArrayBuffer[CCExpr]
 
       var e = exp
@@ -1141,7 +1142,7 @@ class CCReader private (prog : Program,
 
     def atomicEval(exp : Exp) : CCExpr = atomicEval(List(exp))
 
-    def atomicEval(exps : Seq[Exp]) : CCExpr = {
+    def atomicEval(exps : collection.Seq[Exp]) : CCExpr = {
       val currentClauseNum = clauses.size
       val initSize = values.size
 
@@ -1815,9 +1816,9 @@ class CCReader private (prog : Program,
     }
 
     private val jumpLocs =
-      new ArrayBuffer[(String, Predicate, Seq[ITerm], Int)]
+      new ArrayBuffer[(String, Predicate, collection.Seq[ITerm], Int)]
     private val labelledLocs =
-      new MHashMap[String, (Predicate, Seq[ITerm])]
+      new MHashMap[String, (Predicate, collection.Seq[ITerm])]
     private val usedJumpTargets =
       new MHashMap[Predicate, String]
     private val atomicBlocks =

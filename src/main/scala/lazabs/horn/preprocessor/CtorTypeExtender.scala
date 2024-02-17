@@ -57,7 +57,7 @@ class CtorTypeExtender extends ArgumentExpander {
     ADT.CtorIdRewriter.visit(f, ()).asInstanceOf[IFormula]
 
   def expand(pred : Predicate, argNum : Int, sort : Sort)
-           : Option[(Seq[(ITerm, Sort, String)], Option[ITerm])] = {
+           : Option[(collection.Seq[(ITerm, Sort, String)], Option[ITerm])] = {
     val adtSort = sort.asInstanceOf[ADT.ADTProxySort]
     if (usedTheories contains adtSort.adtTheory) {
       val idfun = adtSort.adtTheory.ctorIds(adtSort.sortNum)

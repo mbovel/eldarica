@@ -160,8 +160,8 @@ object Horn {
   /**
    * return all the relation variable signatures in a Horn clause
    */
-  def getRelVarSignatures(hc: HornClause): Map[String,Seq[Type]] = {
-    var result = collection.mutable.Map[String,Seq[Type]]().empty
+  def getRelVarSignatures(hc: HornClause): Map[String,collection.Seq[Type]] = {
+    var result = collection.mutable.Map[String,collection.Seq[Type]]().empty
     (hc.head :: hc.body).foreach{_ match {
       case RelVar(relName, params) =>
         result += (relName -> (params map (_.typ)))

@@ -63,7 +63,7 @@ class DepthFirstForwardSymex[CC](clauses: Iterable[CC])(
   }
 
   @tailrec final override def getClausesForResolution
-    : Option[(NormClause, Seq[UnitClause])] = {
+    : Option[(NormClause, collection.Seq[UnitClause])] = {
     if (unitClauseDB isEmpty) { // the search space is exhausted
       None
     } else {
@@ -107,7 +107,7 @@ class DepthFirstForwardSymex[CC](clauses: Iterable[CC])(
   }
 
   override def handleForwardSubsumption(nucleus:   NormClause,
-                                        electrons: Seq[UnitClause]): Unit = {
+                                        electrons: collection.Seq[UnitClause]): Unit = {
     printInfo("  (DFS: handling forward subsumption.)\n")
     backtrack()
   }
@@ -117,7 +117,7 @@ class DepthFirstForwardSymex[CC](clauses: Iterable[CC])(
   }
 
   override def handleFalseConstraint(nucleus:   NormClause,
-                                     electrons: Seq[UnitClause]): Unit = {
+                                     electrons: collection.Seq[UnitClause]): Unit = {
 
     backtrack()
   }

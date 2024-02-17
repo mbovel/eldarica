@@ -51,7 +51,7 @@ object SimpleWrapper {
    * counterexample only lazily when needed.
    */
   def solveLazily(clauses : Iterable[HornClauses.Clause],
-                  initialPredicates : Map[Predicate, Seq[IFormula]],
+                  initialPredicates : Map[Predicate, collection.Seq[IFormula]],
                   useTemplates : Boolean,
                   debuggingOutput : Boolean,
                   useAbstractPO : Boolean)
@@ -119,7 +119,7 @@ object SimpleWrapper {
    * (<code>showDot</code>).
    */
   def solve(clauses : Iterable[HornClauses.Clause],
-            initialPredicates : Map[Predicate, Seq[IFormula]] = Map(),
+            initialPredicates : Map[Predicate, collection.Seq[IFormula]] = Map(),
             useTemplates : Boolean = false,
             debuggingOutput : Boolean = false,
             showDot : Boolean = false,
@@ -141,7 +141,7 @@ object SimpleWrapper {
    * Check whether the given clauses are satisfiable.
    */
   def isSat(clauses : Iterable[HornClauses.Clause],
-            initialPredicates : Map[Predicate, Seq[IFormula]] = Map(),
+            initialPredicates : Map[Predicate, collection.Seq[IFormula]] = Map(),
             useTemplates : Boolean = false,
             debuggingOutput : Boolean = false,
             useAbstractPO : Boolean = false) : Boolean =

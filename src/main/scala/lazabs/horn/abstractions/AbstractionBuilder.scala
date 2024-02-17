@@ -48,7 +48,7 @@ object StaticAbstractionBuilder {
  * of Horn clauses
  */
 class StaticAbstractionBuilder(
-         clauses : Seq[HornClauses.Clause],
+         clauses : collection.Seq[HornClauses.Clause],
          abstractionType : StaticAbstractionBuilder.AbstractionType.Value) {
 
   import IExpression._

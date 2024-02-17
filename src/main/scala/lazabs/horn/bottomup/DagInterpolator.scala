@@ -89,7 +89,7 @@ object DagInterpolator {
    * modify clauese dag - introduce relations
    */ 
   def interpolatingPredicateGen(clauseDag : Dag[NormClause])
-                               : Either[Seq[(Predicate, Seq[Conjunction])],
+                               : Either[collection.Seq[(Predicate, collection.Seq[Conjunction])],
                                         Tree[IAtom]] = {
 //        (for (c <- clauseDag) yield c.head).prettyPrint
 
@@ -127,13 +127,13 @@ object DagInterpolator {
    * Generate predicates using ordinary tree interpolation
    */
   def interpolatingPredicateGenCEX(clauseDag : Dag[AndOrNode[NormClause, Unit]])
-                     : Either[Seq[(Predicate, Seq[Conjunction])],
+                     : Either[collection.Seq[(Predicate, collection.Seq[Conjunction])],
                               Dag[(IAtom, NormClause)]] =
     interpolatingPredicateGenCEX(clauseDag, TreeInterpolator.treeInterpolate _)
 
   def interpolatingPredicateGenCEX(clauseDag : Dag[AndOrNode[NormClause, Unit]],
                                    treeInterpolator : TreeInterpolator.TreeInterpolatorFun)
-                     : Either[Seq[(Predicate, Seq[Conjunction])],
+                     : Either[collection.Seq[(Predicate, collection.Seq[Conjunction])],
                               Dag[(IAtom, NormClause)]] =
     cexGuidedExpansion(stripOrNodes(clauseDag)) match {
       case Left(partialTree) =>
@@ -152,7 +152,7 @@ object DagInterpolator {
    * Generate predicates using disjunctive interpolation
    */
   def interpolatingPredicateGenCEXAndOr(clauseDag : Dag[AndOrNode[NormClause, Unit]])
-                     : Either[Seq[(Predicate, Seq[Conjunction])],
+                     : Either[collection.Seq[(Predicate, collection.Seq[Conjunction])],
                               Dag[(IAtom, NormClause)]] =
     predicateGenerator(clauseDag, 1500) match {
       case Left(preds) =>
@@ -183,7 +183,7 @@ object DagInterpolator {
    * with many or-nodes back into the predicate abstraction engine
    */
   def layeredPredicateGen(clauseDag : Dag[AndOrNode[NormClause, Unit]])
-                     : Either[Seq[(Predicate, Seq[Conjunction])],
+                     : Either[collection.Seq[(Predicate, collection.Seq[Conjunction])],
                               Dag[(IAtom, NormClause)]] = {
     val orNum = clauseDag.iterator.count(_.isInstanceOf[OrNode[_, _]])
 
@@ -200,7 +200,7 @@ object DagInterpolator {
   def layeredPredicateGenHelp[CC]
                              (clauseDag : Dag[AndOrNode[CC, Unit]])
                              (implicit ev: CC => HornClauses.ConstraintClause)
-                     : Either[Seq[(Predicate, Seq[Conjunction])],
+                     : Either[collection.Seq[(Predicate, collection.Seq[Conjunction])],
                               Dag[(IAtom, CC)]] = {
       import HornClauses._
 
@@ -250,12 +250,12 @@ object DagInterpolator {
               val DagNode(AndNode(clause), children, _) = d
               val newClause = new ConstraintClause {
                 val head : Literal = headLit
-                val body : Seq[Literal] =
+                val body : collection.Seq[Literal] =
                   for (c <- children) yield freshPredicates(index + c)
                 def localVariableNum : Int = clause.localVariableNum
-                def instantiateConstraint(headArguments : Seq[ConstantTerm],
-                                          bodyArguments: Seq[Seq[ConstantTerm]],
-                                          localVariables : Seq[ConstantTerm],
+                def instantiateConstraint(headArguments : collection.Seq[ConstantTerm],
+                                          bodyArguments: collection.Seq[collection.Seq[ConstantTerm]],
+                                          localVariables : collection.Seq[ConstantTerm],
                                           sig : Signature) : Conjunction =
                   clause.instantiateConstraint(headArguments, bodyArguments,
                                                localVariables, sig)
@@ -333,13 +333,13 @@ object DagInterpolator {
 
   def partialPredicateGen(spanningTree : Tree[Either[NormClause, RelationSymbol]],
                           fullCEX : Boolean)
-                 : Either[Seq[(Predicate, Seq[Conjunction])], Tree[IAtom]] =
+                 : Either[collection.Seq[(Predicate, collection.Seq[Conjunction])], Tree[IAtom]] =
     partialPredicateGen(spanningTree, fullCEX, TreeInterpolator.treeInterpolate _)
 
   def partialPredicateGen(spanningTree : Tree[Either[NormClause, RelationSymbol]],
                           fullCEX : Boolean,
                           treeInterpolator : TreeInterpolator.TreeInterpolatorFun)
-                 : Either[Seq[(Predicate, Seq[Conjunction])], Tree[IAtom]] = {
+                 : Either[collection.Seq[(Predicate, collection.Seq[Conjunction])], Tree[IAtom]] = {
     val theories = {
       val coll = new TheoryCollector
       for (Left(NormClause(constraint, _, _)) <- spanningTree.iterator)
@@ -388,9 +388,9 @@ object DagInterpolator {
 
   def callInterpolator(spanningTree : Tree[Either[NormClause, RelationSymbol]],
                        constraintTree : Tree[Conjunction],
-                       vocabularyTree : Tree[Seq[ConstantTerm]],
+                       vocabularyTree : Tree[collection.Seq[ConstantTerm]],
                        order : TermOrder)
-                      : Either[Seq[(Predicate, Seq[Conjunction])], Tree[IAtom]] = {
+                      : Either[collection.Seq[(Predicate, collection.Seq[Conjunction])], Tree[IAtom]] = {
     val theories = {
       val coll = new TheoryCollector
       for (c <- constraintTree)
@@ -404,11 +404,11 @@ object DagInterpolator {
 
   def callInterpolator(spanningTree : Tree[Either[NormClause, RelationSymbol]],
                        constraintTree : Tree[Conjunction],
-                       vocabularyTree : Tree[Seq[ConstantTerm]],
+                       vocabularyTree : Tree[collection.Seq[ConstantTerm]],
                        order : TermOrder,
-                       theories : Seq[Theory],
+                       theories : collection.Seq[Theory],
                        treeInterpolator : TreeInterpolator.TreeInterpolatorFun)
-                      : Either[Seq[(Predicate, Seq[Conjunction])], Tree[IAtom]] = {
+                      : Either[collection.Seq[(Predicate, collection.Seq[Conjunction])], Tree[IAtom]] = {
     treeInterpolator(constraintTree, order, false, theories) match {
       case Right(m) => { assert(false); null } // should not happen
 /*
@@ -416,7 +416,7 @@ object DagInterpolator {
         // found a countermodel
         val reducer = sf reducer m
         implicit val o = order
-        def createAtom(p : Predicate, syms : Seq[ConstantTerm]) =
+        def createAtom(p : Predicate, syms : collection.Seq[ConstantTerm]) =
                   Atom(p, for (c <- syms) yield {
                             val redEq = reducer(c === v(0))
                             if ((redEq(0) get c).isZero)
@@ -469,7 +469,7 @@ object DagInterpolator {
     val currentEquations = new UnionFind[ConstantTerm]
     val literalSyms = new MHashMap[IdealInt, ConstantTerm]
 
-    val childrenSyms = new ArrayBuffer[Seq[Seq[ConstantTerm]]]
+    val childrenSyms = new ArrayBuffer[collection.Seq[collection.Seq[ConstantTerm]]]
 
     def addConstraint(clause : NormClause,
                       connectedSyms : Option[(Int, Int)]) = {
@@ -594,10 +594,10 @@ object DagInterpolator {
                                  Dag[(IAtom, NormClause)]] = SimpleAPI.withProver(enableAssert = lazabs.Main.assertions) { p =>
     import p._
 
-    type SpanTree = Tree[(Int, Seq[ConstantTerm], Option[Seq[ConstantTerm]])]
+    type SpanTree = Tree[(Int, collection.Seq[ConstantTerm], Option[collection.Seq[ConstantTerm]])]
 
     val definedArgSyms =
-      Array.fill[List[Seq[ConstantTerm]]](clauseDag.size)(List())
+      Array.fill[List[collection.Seq[ConstantTerm]]](clauseDag.size)(List())
 
     def dag2Tree(d : Dag[NormClause], depth : Int) : SpanTree = {
       val DagNode(clause@NormClause(constraint, _, (rs, _)), children, _) = d
@@ -730,7 +730,7 @@ object DagInterpolator {
         // found a genuine counterexample,
         // build a minimal counterexample dag
 
-        def cexAtom(dagIndex : Int, syms : Seq[ConstantTerm]) : IAtom = {
+        def cexAtom(dagIndex : Int, syms : collection.Seq[ConstantTerm]) : IAtom = {
           val NormClause(_, _, (RelationSymbol(pred), _)) = clauseDag(dagIndex)
           IAtom(pred, for (c <- syms) yield evalToTerm(c))
         }

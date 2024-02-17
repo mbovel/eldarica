@@ -51,7 +51,7 @@ class RationalTests
   ap.util.Debug enableAllAssertions true
   lazabs.GlobalParameters.get.assertions = true
 
-  def solve(clauses : Seq[Clause]) = hideOutput {
+  def solve(clauses : collection.Seq[Clause]) = hideOutput {
     val preprocessor = new DefaultPreprocessor
 
     val (simplifiedClauses, simpPreHints, backTranslator) =

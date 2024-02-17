@@ -61,7 +61,7 @@ class BreadthFirstForwardSymex[CC](clauses  : Iterable[CC],
   // than a single state, if other states we use are in the queue, we remove
   // from those states' queue the path that we are about to take.
 
-  private val choicesQueue = new MQueue[(NormClause, Seq[UnitClause])]
+  private val choicesQueue = new MQueue[(NormClause, collection.Seq[UnitClause])]
   /*
    * Initialize the search by adding the facts (the initial states).
    * Each fact corresponds to a source in the search DAG.
@@ -72,14 +72,14 @@ class BreadthFirstForwardSymex[CC](clauses  : Iterable[CC],
   }
 
   final override def getClausesForResolution
-    : Option[(NormClause, Seq[UnitClause])] = {
+    : Option[(NormClause, collection.Seq[UnitClause])] = {
     if (unitClauseDB.isEmpty || choicesQueue.isEmpty)
       None
     else {
       maxDepth match {
         case None => Some(choicesQueue.dequeue)
         case Some(depth) =>
-          var res : Option[(NormClause, Seq[UnitClause])] = None
+          var res : Option[(NormClause, collection.Seq[UnitClause])] = None
           var continue = true
           do {
             val candidate = choicesQueue.dequeue()
@@ -120,13 +120,13 @@ class BreadthFirstForwardSymex[CC](clauses  : Iterable[CC],
   }
 
   override def handleForwardSubsumption(nucleus:   NormClause,
-                                        electrons: Seq[UnitClause]): Unit = {}
+                                        electrons: collection.Seq[UnitClause]): Unit = {}
 
   override def handleBackwardSubsumption(subsumed: Set[UnitClause]): Unit = {
     // todo: future work
   }
 
   override def handleFalseConstraint(nucleus:   NormClause,
-                                     electrons: Seq[UnitClause]): Unit = {}
+                                     electrons: collection.Seq[UnitClause]): Unit = {}
 
 }

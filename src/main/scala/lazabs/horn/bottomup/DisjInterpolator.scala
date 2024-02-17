@@ -67,7 +67,7 @@ object DisjInterpolator {
   def iPredicateGenerator[CC]
                          (clauseDag : Dag[AndOrNode[CC, Unit]])
                          (implicit ev: CC => HornClauses.ConstraintClause)
-                        : Either[Seq[(Predicate, Seq[IFormula])],
+                        : Either[collection.Seq[(Predicate, collection.Seq[IFormula])],
                                  Dag[(IAtom, Option[CC])]] = predicateGenerator(clauseDag) match {
     case Left(predicates) => {
       val simplifier = new Simplifier
@@ -94,11 +94,11 @@ object DisjInterpolator {
                         (clauseDag : Dag[AndOrNode[CC, Unit]],
                          orInterpolationTimeout : Int = Int.MaxValue)
                         (implicit ev: CC => HornClauses.ConstraintClause)
-                       : Either[Seq[(Predicate, Seq[Conjunction])],
+                       : Either[collection.Seq[(Predicate, collection.Seq[Conjunction])],
                                 Dag[(IAtom, Option[CC])]] = {
     val (factoredDag, localPreds) = factoring(clauseDag)
     var dag = factoredDag
-    var res : Either[Seq[(Predicate, Seq[Conjunction])], Dag[(IAtom, Option[CC])]] = null
+    var res : Either[collection.Seq[(Predicate, collection.Seq[Conjunction])], Dag[(IAtom, Option[CC])]] = null
 
     def simplify(andNum : Int, orNum : Int) = {
         // simplify the clause dag by removing some or-nodes
@@ -194,7 +194,7 @@ object DisjInterpolator {
                         (clauseDag : Dag[AndOrNode[CC, Unit]],
                          giveUpCondition : (Int, Int) => Boolean)
                         (implicit ev: CC => HornClauses.ConstraintClause)
-                       : Either[Seq[(Predicate, Seq[Conjunction])],
+                       : Either[collection.Seq[(Predicate, collection.Seq[Conjunction])],
                                 Dag[(IAtom, CC)]] =
     SimpleAPI.withProver(enableAssert = lazabs.GlobalParameters.get.assertions) { p =>
       import p._
@@ -208,12 +208,12 @@ object DisjInterpolator {
 
       type SpanTree =
         Tree[(Int,                                   // Index of node in clauseDag
-              AndOrNode[Seq[ConstantTerm],           // And: Local variables
-                        (Seq[ConstantTerm],          // Or:  Relation variable arguments
-                         Seq[IFormula])])]           //      Boolean variables for branches
+              AndOrNode[collection.Seq[ConstantTerm],           // And: Local variables
+                        (collection.Seq[ConstantTerm],          // Or:  Relation variable arguments
+                         collection.Seq[IFormula])])]           //      Boolean variables for branches
 
       val definedArgSyms =
-        Array.fill[List[(Seq[ConstantTerm], IFormula)]](clauseDag.size)(List())
+        Array.fill[List[(collection.Seq[ConstantTerm], IFormula)]](clauseDag.size)(List())
 
       val branchFlagAncestors =
         new MHashMap[IFormula, Set[IFormula]]
@@ -297,8 +297,8 @@ object DisjInterpolator {
                       depth : Int,
                       recursionLimit : Int,
                       currentBFlag : IFormula,
-                      branchFlags : Seq[IFormula],
-                      syms : Seq[ConstantTerm]) : SpanTree = {
+                      branchFlags : collection.Seq[IFormula],
+                      syms : collection.Seq[ConstantTerm]) : SpanTree = {
         val andChildren = d match {
           case DagNode(AndNode(_), _, _) => List(0)
           case DagNode(OrNode(_), children, _) => children
@@ -322,7 +322,7 @@ object DisjInterpolator {
 
       //////////////////////////////////////////////////////////////////////////
 
-      def buildExpansion(t : SpanTree, headArgs : Seq[ConstantTerm])
+      def buildExpansion(t : SpanTree, headArgs : collection.Seq[ConstantTerm])
                         : LazyConjunction = t match {
         case Tree((dagIndex, AndNode(localSyms)), children) => {
           implicit val o = order
@@ -534,7 +534,7 @@ object DisjInterpolator {
 
           val (constraintTree, vocTree) = {
             def conTree(t : SpanTree, currentGuard : Option[Conjunction])
-                       : Tree[(Conjunction, (Predicate, Seq[ConstantTerm]))] = t match {
+                       : Tree[(Conjunction, (Predicate, collection.Seq[ConstantTerm]))] = t match {
               case Tree((_, OrNode((headArgs, branchFlags))), children)
                   if (branchFlags.size == children.size) => {
 
@@ -759,7 +759,7 @@ object DisjInterpolator {
                        (clauseDag : Dag[AndOrNode[CC, Unit]])
                        (implicit ev: CC => ConstraintClause)
                        : (Dag[AndOrNode[Either[CC, ConstraintClause], Unit]],
-                          Seq[Predicate]) = {
+                          collection.Seq[Predicate]) = {
     type CCDag = Dag[AndOrNode[Either[CC, ConstraintClause], Unit]]
 
     var dag : CCDag = for (c <- clauseDag) yield c match {
@@ -845,9 +845,9 @@ object DisjInterpolator {
             val body = for ((lit, Left(_)) <- clause.body zip newBodyLits)
                        yield lit
             val localVariableNum = clause.localVariableNum
-            def instantiateConstraint(headArguments : Seq[ConstantTerm],
-                                      bodyArguments: Seq[Seq[ConstantTerm]],
-                                      localVariables : Seq[ConstantTerm],
+            def instantiateConstraint(headArguments : collection.Seq[ConstantTerm],
+                                      bodyArguments: collection.Seq[collection.Seq[ConstantTerm]],
+                                      localVariables : collection.Seq[ConstantTerm],
                                       sig : Signature) = {
               val newHeadArgs = headArguments take headLit.predicate.arity
               val newBodyArgs = for (p <- newBodyLits) yield p match {
@@ -876,12 +876,12 @@ object DisjInterpolator {
           val body = sLit(tempPred) :: (
                      for (l <- sharedHeadLits.toList) yield sLit(l.predicate))
           val localVariableNum = 0
-          def instantiateConstraint(headArguments : Seq[ConstantTerm],
-                                    bodyArguments: Seq[Seq[ConstantTerm]],
-                                    localVariables : Seq[ConstantTerm],
+          def instantiateConstraint(headArguments : collection.Seq[ConstantTerm],
+                                    bodyArguments: collection.Seq[collection.Seq[ConstantTerm]],
+                                    localVariables : collection.Seq[ConstantTerm],
                                     sig : Signature) = {
             import TerForConvenience._
-            implicit val _ = sig.order
+            implicit val termOrder = sig.order
             val tempPredArgs = bodyArguments.head
             (headArguments === tempPredArgs.take(headArguments.size)) & conj(
                 for ((args, o) <- bodyArguments.tail zip tempPredArgOffsets)
@@ -976,7 +976,7 @@ object DisjInterpolator {
     ////////////////////////////////////////////////////////////////////////////
 
     val clauseFormulas = new ArrayBuffer[IFormula]
-    val clauseSchemas = new ArrayBuffer[(Predicate, Seq[Predicate])]
+    val clauseSchemas = new ArrayBuffer[(Predicate, collection.Seq[Predicate])]
 
     for ((d, i) <- clauseDag.subdagIterator.zipWithIndex)
       (freshRelSyms get i) match {
@@ -1093,9 +1093,9 @@ object DisjInterpolator {
       val head = sLit(p)
       val body = List()
       val localVariableNum = 0
-      def iInstantiateConstraint(headArguments : Seq[ConstantTerm],
-                                 bodyArguments: Seq[Seq[ConstantTerm]],
-                                 localVariables : Seq[ConstantTerm]) : IFormula = {
+      def iInstantiateConstraint(headArguments : collection.Seq[ConstantTerm],
+                                 bodyArguments: collection.Seq[collection.Seq[ConstantTerm]],
+                                 localVariables : collection.Seq[ConstantTerm]) : IFormula = {
         val Seq(x) = headArguments
         x >= 0
       }
@@ -1106,9 +1106,9 @@ object DisjInterpolator {
       val head = sLit(s)
       val body = List(sLit(p))
       val localVariableNum = 0
-      def iInstantiateConstraint(headArguments : Seq[ConstantTerm],
-                                 bodyArguments: Seq[Seq[ConstantTerm]],
-                                 localVariables : Seq[ConstantTerm]) : IFormula = {
+      def iInstantiateConstraint(headArguments : collection.Seq[ConstantTerm],
+                                 bodyArguments: collection.Seq[collection.Seq[ConstantTerm]],
+                                 localVariables : collection.Seq[ConstantTerm]) : IFormula = {
         val Seq(x) = headArguments
         val Seq(Seq(y)) = bodyArguments
         x === y + 1
@@ -1120,9 +1120,9 @@ object DisjInterpolator {
       val head = sLit(s)
       val body = List(sLit(p))
       val localVariableNum = 0
-      def iInstantiateConstraint(headArguments : Seq[ConstantTerm],
-                                 bodyArguments: Seq[Seq[ConstantTerm]],
-                                 localVariables : Seq[ConstantTerm]) : IFormula = {
+      def iInstantiateConstraint(headArguments : collection.Seq[ConstantTerm],
+                                 bodyArguments: collection.Seq[collection.Seq[ConstantTerm]],
+                                 localVariables : collection.Seq[ConstantTerm]) : IFormula = {
         val Seq(x) = headArguments
         val Seq(Seq(y)) = bodyArguments
         x === y + 5
@@ -1134,9 +1134,9 @@ object DisjInterpolator {
       val head = sLit(s)
       val body = List(sLit(s), sLit(s))
       val localVariableNum = 0
-      def iInstantiateConstraint(headArguments : Seq[ConstantTerm],
-                                 bodyArguments: Seq[Seq[ConstantTerm]],
-                                 localVariables : Seq[ConstantTerm]) : IFormula = {
+      def iInstantiateConstraint(headArguments : collection.Seq[ConstantTerm],
+                                 bodyArguments: collection.Seq[collection.Seq[ConstantTerm]],
+                                 localVariables : collection.Seq[ConstantTerm]) : IFormula = {
         val Seq(x) = headArguments
         val Seq(Seq(y), Seq(z)) = bodyArguments
         x === y - 3 & y === z
@@ -1148,9 +1148,9 @@ object DisjInterpolator {
       val head = sLit(FALSE)
       val body = List(sLit(s))
       val localVariableNum = 0
-      def iInstantiateConstraint(headArguments : Seq[ConstantTerm],
-                                 bodyArguments: Seq[Seq[ConstantTerm]],
-                                 localVariables : Seq[ConstantTerm]) : IFormula = {
+      def iInstantiateConstraint(headArguments : collection.Seq[ConstantTerm],
+                                 bodyArguments: collection.Seq[collection.Seq[ConstantTerm]],
+                                 localVariables : collection.Seq[ConstantTerm]) : IFormula = {
         val Seq(Seq(x)) = bodyArguments
         x < 0
       }

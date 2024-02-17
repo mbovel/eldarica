@@ -47,12 +47,12 @@ trait HornPredAbsContext[CC] {
 
   val rand : Random
 
-  val theories : Seq[Theory]
+  val theories : collection.Seq[Theory]
   val sf : SymbolFactory
 
   val useHashing : Boolean
 
-  val normClauses : Seq[(NormClause, CC)]
+  val normClauses : collection.Seq[(NormClause, CC)]
 
   val relationSymbols : Map[Predicate, RelationSymbol]
   val relationSymbolOccurrences : Map[RelationSymbol, Vector[(NormClause, Int, Int)]]

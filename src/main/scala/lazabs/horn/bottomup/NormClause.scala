@@ -119,16 +119,16 @@ import scala.collection.mutable.ArrayBuffer
   }
 
   case class NormClause(constraint : Conjunction,
-                        body : Seq[(RelationSymbol, Int)],
+                        body : collection.Seq[(RelationSymbol, Int)],
                         head : (RelationSymbol, Int))
                        (implicit sf : SymbolFactory) {
-    val headSyms : Seq[ConstantTerm] =
+    val headSyms : collection.Seq[ConstantTerm] =
       head._1.arguments(head._2)
-    val bodySyms : Seq[Seq[ConstantTerm]] =
+    val bodySyms : collection.Seq[collection.Seq[ConstantTerm]] =
       for ((rs, occ) <- body) yield (rs arguments occ)
     val order = sf.order restrict (
       constraint.constants ++ headSyms ++ bodySyms.flatten)
-    val localSymbols : Seq[ConstantTerm] =
+    val localSymbols : collection.Seq[ConstantTerm] =
       order.sort(constraint.constants -- headSyms -- bodySyms.flatten)
     val allSymbols =
       (localSymbols.iterator ++ headSyms.iterator ++ (
@@ -136,13 +136,13 @@ import scala.collection.mutable.ArrayBuffer
 
     // indexes of the bodySyms constants that actually occur in the
     // constraint and are therefore relevant
-    val relevantBodySyms : Seq[Seq[Int]] =
+    val relevantBodySyms : collection.Seq[collection.Seq[Int]] =
       for (syms <- bodySyms) yield
         (for ((c, i) <- syms.iterator.zipWithIndex;
               if (constraint.constants contains c)) yield i).toSeq
 
     def freshConstraint(implicit sf : SymbolFactory)
-                       : (Conjunction, Seq[ConstantTerm], Seq[Seq[ConstantTerm]]) = {
+                       : (Conjunction, collection.Seq[ConstantTerm], collection.Seq[collection.Seq[ConstantTerm]]) = {
       val newLocalSyms =
         sf duplicateConstants localSymbols
       val newHeadSyms = 
@@ -157,9 +157,9 @@ import scala.collection.mutable.ArrayBuffer
       (subst(constraint), newHeadSyms, newBodySyms)
     }
 
-    def substituteSyms(newLocalSyms : Seq[ConstantTerm],
-                       newHeadSyms : Seq[ConstantTerm],
-                       newBodySyms : Seq[Seq[ConstantTerm]])
+    def substituteSyms(newLocalSyms : collection.Seq[ConstantTerm],
+                       newHeadSyms : collection.Seq[ConstantTerm],
+                       newBodySyms : collection.Seq[collection.Seq[ConstantTerm]])
                       (implicit order : TermOrder) : Conjunction = {
       val newSyms =
         newLocalSyms.iterator ++ newHeadSyms.iterator ++ (

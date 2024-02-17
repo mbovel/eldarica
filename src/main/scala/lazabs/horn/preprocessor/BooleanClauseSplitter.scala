@@ -98,7 +98,7 @@ class BooleanClauseSplitter extends HornPreprocessor {
                                initialClause : Clause,
                                indexTree : Option[Tree[Int]])
                               (implicit p : SimpleAPI)
-                            : (Seq[Clause], Int) = {
+                            : (collection.Seq[Clause], Int) = {
     val Clause(headAtom, body, constraint) = clause
     val negConstraint = Transform2NNF(~constraint)
 
@@ -179,7 +179,7 @@ class BooleanClauseSplitter extends HornPreprocessor {
   }
 
   private def fullDNF(clause : Clause, addBackMapping : Boolean = true)
-                     (implicit p : SimpleAPI) : Seq[Clause] = {
+                     (implicit p : SimpleAPI) : collection.Seq[Clause] = {
     val Clause(headAtom, body, constraint) = clause
 
     // transform the clause constraint to DNF, and create a separate
@@ -231,7 +231,7 @@ class BooleanClauseSplitter extends HornPreprocessor {
   private val globalStartTime = System.currentTimeMillis
 
   private def cleverSplit(clause : Clause)
-                         (implicit p : SimpleAPI) : Seq[Clause] =
+                         (implicit p : SimpleAPI) : collection.Seq[Clause] =
     if (needsSplittingPos(clause.constraint)) {
       // first try the full splitting, but this might sometimes explode
       val startTime = System.currentTimeMillis

@@ -159,8 +159,8 @@ class ClauseShortener extends HornPreprocessor {
   //////////////////////////////////////////////////////////////////////////////
 
   private def splitClauseBody(clause : Clause,
-                              initialPreds : Map[Predicate, Seq[IFormula]])
-                             : (List[Clause], Map[Predicate, Seq[IFormula]]) = {
+                              initialPreds : Map[Predicate, collection.Seq[IFormula]])
+                             : (List[Clause], Map[Predicate, collection.Seq[IFormula]]) = {
     val Clause(head, body, constraint) = clause
 
     if (body.size > 2) {
@@ -304,7 +304,7 @@ class ClauseShortener extends HornPreprocessor {
 
   private def splitClauseBody2(clause : Clause,
                                initialPredicates : Map[IExpression.Predicate,
-                                                       Seq[IFormula]])
+                                                       collection.Seq[IFormula]])
                                : List[Clause] =
     if (clause.body.size <= maxClauseBodySize ||
         ((initialPredicates get clause.head.pred) match {
@@ -319,7 +319,7 @@ class ClauseShortener extends HornPreprocessor {
 
   private def splitClauseBody2(head : IAtom,
                                body : List[IAtom],
-                               constraint : Seq[IFormula]) : List[Clause] =
+                               constraint : collection.Seq[IFormula]) : List[Clause] =
     if (body.size <= maxClauseBodySize) {
       List(Clause(head, body, and(constraint)))
     } else {
@@ -327,7 +327,7 @@ class ClauseShortener extends HornPreprocessor {
       val bodyHalf1 = body take halfSize
       val bodyHalf2 = body drop halfSize
 
-      def findRelevantConstraints(terms : Seq[ITerm]) : Seq[IFormula] = {
+      def findRelevantConstraints(terms : collection.Seq[ITerm]) : collection.Seq[IFormula] = {
         val syms = new MHashSet[ConstantTerm]
         for (t <- terms)
           syms ++= SymbolCollector constants t
@@ -381,7 +381,7 @@ class ClauseShortener extends HornPreprocessor {
   //////////////////////////////////////////////////////////////////////////////
   // Alternative implementation, using fewer new predicates
 
-  private def splitClauseBodies3(clauses : Seq[Clause],
+  private def splitClauseBodies3(clauses : collection.Seq[Clause],
                                  initialPreds : VerificationHints)
                                : (List[Clause], VerificationHints) = {
     // global list of all predicates, to ensure determinism

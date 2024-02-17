@@ -43,7 +43,7 @@ case class InterpNode(override val id: Int, func: Expression) extends ARGNode(id
  * @param   params: the parameters used in the AND transition
  * @param   children: the set of the children in the AND transition  
  */
-case class AndTransition(val clause: HornClause,val children: Seq[ARGNode])
+case class AndTransition(val clause: HornClause,val children: collection.Seq[ARGNode])
 
 case class ARGraph(
   var startNode:       ARGNode,                                               // start node

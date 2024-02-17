@@ -38,7 +38,7 @@ object ParallelComputation {
    * <code>parameters</code> list is empty, the computation will just be
    * run with the current global parameters.
    */
-  def apply[A](parameters  : Seq[GlobalParameters],
+  def apply[A](parameters  : collection.Seq[GlobalParameters],
                startDelay  : Int = 200,
                checkPeriod : Int = 50)
               (comp: => A) =
@@ -54,8 +54,8 @@ object ParallelComputation {
  * Simple class to do some computation in parallel for several settings,
  * and stop all threads as soon as one of them has produced a result.
  */
-class ParallelComputation[A](comps       : Seq[() => A],
-                             parameters  : Seq[GlobalParameters],
+class ParallelComputation[A](comps       : collection.Seq[() => A],
+                             parameters  : collection.Seq[GlobalParameters],
                              startDelay  : Int = 100,
                              checkPeriod : Int = 10) {
 

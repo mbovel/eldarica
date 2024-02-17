@@ -45,10 +45,10 @@ import DisjInterpolator._
 class IncrementalHornPredAbs
                  [CC]
                  (iClauses : Iterable[CC],
-                  initialPredicates : Map[Predicate, Seq[IFormula]],
+                  initialPredicates : Map[Predicate, collection.Seq[IFormula]],
                   substitutableSyms : Set[Predicate],
                   predicateGenerator : Dag[AndOrNode[NormClause, Unit]] =>
-                                       Either[Seq[(Predicate, Seq[Conjunction])],
+                                       Either[collection.Seq[(Predicate, collection.Seq[Conjunction])],
                                               Dag[(IAtom, NormClause)]],
                   counterexampleMethod : CEGAR.CounterexampleMethod.Value =
                                            CEGAR.CounterexampleMethod.FirstBestShortest)

@@ -51,7 +51,7 @@ object Status extends Enumeration {
   val UNKNOWN, SAFE, ERROR = Value
 }
 
-case class HornCegar(val originalConstraints: Seq[HornClause], val log: Boolean) {
+case class HornCegar(val originalConstraints: collection.Seq[HornClause], val log: Boolean) {
   val translator = new HornTranslator
 
   import Status._
@@ -165,7 +165,7 @@ case class HornCegar(val originalConstraints: Seq[HornClause], val log: Boolean)
       case Interp(BoolConst(false)) => arg.startNode
       case _ => throw new Exception("Invalid argument in head")
     }
-    var children = Seq[ARGNode]()
+    var children = collection.Seq[ARGNode]()
     cl.body.foreach {_ match {
       case RelVar(varId,childParams) =>
         val child = getAbsNode(varId,alpha(varId))

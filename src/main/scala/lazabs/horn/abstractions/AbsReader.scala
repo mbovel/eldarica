@@ -244,7 +244,7 @@ class AbsReader(input : java.io.Reader) {
 
     ////////////////////////////////////////////////////////////////////////////
 
-    val initialPredicates : List[(String, Seq[IFormula])] =
+    val initialPredicates : List[(String, collection.Seq[IFormula])] =
     (for (predspec <-
             specC.asInstanceOf[Spec].listpredspec_.iterator;
           if (predspec.isInstanceOf[InitialPredicates]);
@@ -266,7 +266,7 @@ class AbsReader(input : java.io.Reader) {
     import VerificationHints._
     import IExpression._
 
-    val templateHints : List[(String, Seq[VerifHintElement])] =
+    val templateHints : List[(String, collection.Seq[VerifHintElement])] =
     (for (predspec <-
             specC.asInstanceOf[Spec].listpredspec_.iterator;
           if (predspec.isInstanceOf[Templates]);
@@ -315,8 +315,8 @@ class AbsReader(input : java.io.Reader) {
 
     ////////////////////////////////////////////////////////////////////////////
 
-    val allHints : Map[String, Seq[VerifHintElement]] = {
-      val res = new MHashMap[String, Seq[VerifHintElement]]
+    val allHints : Map[String, collection.Seq[VerifHintElement]] = {
+      val res = new MHashMap[String, collection.Seq[VerifHintElement]]
 
       for ((predName, preds) <- initialPredicates)
         res.put(predName, preds map (VerifHintInitPred(_)))

@@ -41,7 +41,7 @@ import lazabs.horn.abstractions.{AbsLattice, TermSubsetLattice, ProductLattice}
 object OwickiGries {
   var fileName = ""
   lazy val uppaal = if(fileName != "") promoteLocalVars(parser.UppReader(fileName)) else throw new Exception("Error in Uppaal file")
-  def owickiClauses: (Seq[HornClause]) = {
+  def owickiClauses: (collection.Seq[HornClause]) = {
     //############# different type of Horn clauses #############
     var synchCls      = List[HornClause]()        //  hand-shaking clauses
     var owckCls       = List[HornClause]()        //  Owicki-Gries  clauses
@@ -146,7 +146,7 @@ object OwickiGries {
     //println(owckCls.map(lazabs.viewer.HornPrinter.printDebug(_)).mkString("\n\n"))
     synchCls ++ owckCls    
   }
-  def apply(fileName: String, toAbs: Boolean = false): (Seq[HornClause], Option[Map[String, AbsLattice]]) = {
+  def apply(fileName: String, toAbs: Boolean = false): (collection.Seq[HornClause], Option[Map[String, AbsLattice]]) = {
     this.fileName = fileName
     val (individual, absMap) = individualClauses(uppaal, toAbs)
     val costs = if (toAbs) Some(absMap) else None

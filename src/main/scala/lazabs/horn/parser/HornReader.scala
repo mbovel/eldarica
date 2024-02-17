@@ -58,7 +58,7 @@ import scala.collection.mutable.{HashMap => MHashMap, ArrayBuffer,
                                  HashSet => MHashSet, LinkedHashSet}
 
 object HornReader {
-  def apply(fileName: String): Seq[HornClause] = {
+  def apply(fileName: String): collection.Seq[HornClause] = {
     val in = new java.io.BufferedReader (
                  new java.io.FileReader(fileName))
     val lexer = new HornLexer(in)
@@ -68,14 +68,14 @@ object HornReader {
        tree.value.asInstanceOf[java.util.List[HornClause]]))
   }
 
-  def fromSMT(fileName: String) : Seq[HornClause] =
+  def fromSMT(fileName: String) : collection.Seq[HornClause] =
     SimpleAPI.withProver(enableAssert = lazabs.Main.assertions) { p =>
       (new SMTHornReader(fileName, p)).result
     }
 
   //////////////////////////////////////////////////////////////////////////////
 
-  protected[parser] def cnf_if_needed(aF : IFormula) : Seq[IFormula] =
+  protected[parser] def cnf_if_needed(aF : IFormula) : collection.Seq[IFormula] =
     PartialCNFConverter(aF).toList
 
   /**
@@ -83,9 +83,9 @@ object HornReader {
    * all uninterpreted predicates.
    */
   object PartialCNFConverter
-         extends CollectingVisitor[Unit, Seq[(IFormula, IFormula)]] {
+         extends CollectingVisitor[Unit, collection.Seq[(IFormula, IFormula)]] {
 
-    def apply(f : IFormula) : Seq[IFormula] =
+    def apply(f : IFormula) : collection.Seq[IFormula] =
       for ((f1, f2) <- visit(f, ())) yield (f1 ||| f2)
 
     override def preVisit(t : IExpression,
@@ -117,8 +117,8 @@ object HornReader {
 
     def postVisit(t      : IExpression,
                   arg    : Unit,
-                  subres : Seq[Seq[(IFormula, IFormula)]])
-        : Seq[(IFormula, IFormula)] = t match {
+                  subres : collection.Seq[collection.Seq[(IFormula, IFormula)]])
+        : collection.Seq[(IFormula, IFormula)] = t match {
       case t@IBinFormula(j, _, _) => subres match {
         case Seq(Seq((IBoolLit(false), _)), Seq((IBoolLit(false), _))) =>
           List((false, t))
@@ -160,7 +160,7 @@ object HornReader {
    
     def postVisit(t : IExpression,
                   arg : Context[Unit],
-                  subres : Seq[Unit]) : Unit = ()
+                  subres : collection.Seq[Unit]) : Unit = ()
   }
 
   /**
@@ -190,7 +190,7 @@ object HornReader {
    
     def postVisit(t : IExpression,
                   arg : Context[Unit],
-                  subres : Seq[Unit]) : Unit = ()
+                  subres : collection.Seq[Unit]) : Unit = ()
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -212,7 +212,7 @@ object HornReader {
       }
 
     def postVisit(t : IExpression, arg : Unit,
-                  subres : Seq[IExpression]) : IExpression = t match {
+                  subres : collection.Seq[IExpression]) : IExpression = t match {
       case IFunApp(f, Seq(t)) if isDivZeroFunction(f) => {
         val sort = Sort sortOf t
         println("Warning: eliminating div-zero function")
@@ -543,7 +543,7 @@ class SMTHornReader protected[parser] (
     }
   }
 
-  val result : Seq[HornClause] = eldClauses.flatten match {
+  val result : collection.Seq[HornClause] = eldClauses.flatten match {
     case Seq() => {
       // make sure to generate at least one clause
       List(HornClause(Interp(lazabs.ast.ASTree.BoolConst(false)),
@@ -578,7 +578,7 @@ class SMTHornReader protected[parser] (
       super.preVisit(t, ctxt)
     }
     def postVisit(t : IExpression,
-                  arg : Context[Unit], subres : Seq[Unit]) : Unit = ()
+                  arg : Context[Unit], subres : collection.Seq[Unit]) : Unit = ()
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -586,8 +586,8 @@ class SMTHornReader protected[parser] (
   private def elimQuansTheories(
                 clause : IFormula,
                 unintPredicates : LinkedHashSet[Predicate],
-                allTheories : Seq[Theory],
-                elimArrays : Boolean) : Seq[IFormula] = {
+                allTheories : collection.Seq[Theory],
+                elimArrays : Boolean) : collection.Seq[IFormula] = {
 
     val containsArraySymbol =
       ContainsSymbol(clause, (e : IExpression) => e match {
@@ -663,7 +663,7 @@ class SMTHornReader protected[parser] (
 
       setupTheoryPlugin(new Plugin {
         import Plugin.GoalState
-        override def handleGoal(goal : Goal) : Seq[Plugin.Action] =
+        override def handleGoal(goal : Goal) : collection.Seq[Plugin.Action] =
           goalState(goal) match {
             case GoalState.Final => {
               val occurringPreds =
@@ -723,7 +723,7 @@ class SMTHornReader protected[parser] (
       def existentialiseAtom(a : Atom) : IAtom = {
         val existConsts = createExistentialConstants(a.size)
 
-        implicit val _ = order
+        implicit val termOrder = order
         import TerForConvenience._
 
         addAssertion(a === (for (IConstant(c) <- existConsts) yield c))

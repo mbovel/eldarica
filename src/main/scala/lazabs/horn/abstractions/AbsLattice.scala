@@ -101,11 +101,11 @@ trait AbsLattice
                    infeasible : LatticeObject) : LatticeObject
 
   // Create the composed relation R_A[xa, x] \circ R_B[x, xb] 
-  def asRelation(obj : LatticeObject,  xa : Seq[Seq[ITerm]], xb : Seq[Seq[ITerm]]) : List[IFormula]
+  def asRelation(obj : LatticeObject,  xa : collection.Seq[collection.Seq[ITerm]], xb : collection.Seq[collection.Seq[ITerm]]) : List[IFormula]
 
   // Create the relations 
-  def asRelation(obj : LatticeObject,  xa : Seq[Seq[ITerm]], x : Seq[Seq[ITerm]], 
-                 xb : Seq[Seq[ITerm]]) : List[(IFormula, IFormula)]
+  def asRelation(obj : LatticeObject,  xa : collection.Seq[collection.Seq[ITerm]], x : collection.Seq[collection.Seq[ITerm]], 
+                 xb : collection.Seq[collection.Seq[ITerm]]) : List[(IFormula, IFormula)]
 
   // Return a canonical object (whose relations are equivalent to the relations of o)
   def canonise(o : LatticeObject) : LatticeObject = o
@@ -115,11 +115,11 @@ trait AbsLattice
 
   //////////////////////////////////////////////////////////////////////////////
 
-  def incomparable(mf : Seq[LatticeObject]) : Iterator[LatticeObject] =
+  def incomparable(mf : collection.Seq[LatticeObject]) : Iterator[LatticeObject] =
     incomparable(top, mf)
     
   def incomparable(initialTopEl : LatticeObject,
-                   mf : Seq[LatticeObject]) : Iterator[LatticeObject] = {
+                   mf : collection.Seq[LatticeObject]) : Iterator[LatticeObject] = {
     val incompEls = new ArrayBuffer[LatticeObject]
 
     def incomparableHelp(topEl : LatticeObject,
@@ -207,11 +207,11 @@ trait AbsLattice
   //////////////////////////////////////////////////////////////////////////////
 
   def cheapSearch(isFeasible: LatticeObject => Boolean,
-                  timeout : Long = Int.MaxValue) : Seq[LatticeObject] = {
+                  timeout : Long = Int.MaxValue) : collection.Seq[LatticeObject] = {
     val objs = search(isFeasible, timeout)
     if(objs.isEmpty) return Seq.empty
     val objsCost = objs.map(o => (o, cost(o)))
-    val minEllst = objsCost.unzip._2 : Seq[Int]
+    val minEllst = objsCost.unzip._2 : collection.Seq[Int]
     assert(!minEllst.isEmpty)
     val minEl = minEllst.min
     objsCost.filter{ case (v, x) => x == minEl}.unzip._1
@@ -228,7 +228,7 @@ trait AbsLattice
    * Beware : starts from top unlike the paper
    */
   def search(isFeasible: LatticeObject => Boolean,
-             timeout : Long = Int.MaxValue) : Seq[LatticeObject] = {
+             timeout : Long = Int.MaxValue) : collection.Seq[LatticeObject] = {
     implicit val randGen = new Random (654321)
 
     val timeIsOut = new Timeouter(timeout)
@@ -251,7 +251,7 @@ trait AbsLattice
 
     // Calculate minimal feasible for inc 
     def calcMinFeasSet(inc : Iterator[LatticeObject],
-                       minFeasEls : Seq[LatticeObject]) : Seq[LatticeObject] = {
+                       minFeasEls : collection.Seq[LatticeObject]) : collection.Seq[LatticeObject] = {
       val feasibleInc =
         for (o <- inc; if ({println(o); timeIsOut.apply || cheapIsFeasible(o)})) yield o
 
@@ -297,7 +297,7 @@ trait AbsLattice
    * Beware : starts from top unlike the paper
    */
   def lSearch(isFeasible: LatticeObject => Boolean,
-              timeout : Long = Int.MaxValue) : Seq[LatticeObject] = {
+              timeout : Long = Int.MaxValue) : collection.Seq[LatticeObject] = {
     implicit val randGen = new Random (765432)
 
     val timeIsOut = new Timeouter(timeout)
@@ -371,11 +371,11 @@ trait AbsLattice
 
     // Calculate minimal feasible for inc 
     def calcMinFeasSet(inc : Iterator[LatticeObject], // incomparable elements
-                       minFeasEls : Seq[LatticeObject], // minimal feasible set
-                       costlyElements : Seq[LatticeObject],
+                       minFeasEls : collection.Seq[LatticeObject], // minimal feasible set
+                       costlyElements : collection.Seq[LatticeObject],
                        topBound : LatticeObject,
                        currentCost : Int
-                      ) : Seq[LatticeObject] = {
+                      ) : collection.Seq[LatticeObject] = {
       if (shouldPrintInterpolationAbstraction)
         print(".")
 /*      println("Cheapest MF objects:" + (minFeasEls map (pp _)).mkString(", "))
@@ -480,9 +480,9 @@ trait AbsLattice
    * Returned are the flags, as well as a translator from flag
    * valuations to lattice elements.
    */
-  def genBooleanEncoding(xa : Seq[Seq[ITerm]], xb : Seq[Seq[ITerm]],
+  def genBooleanEncoding(xa : collection.Seq[collection.Seq[ITerm]], xb : collection.Seq[collection.Seq[ITerm]],
                          p : SimpleAPI)
-                        : (Seq[IFormula], Seq[Boolean] => LatticeObject)
+                        : (collection.Seq[IFormula], collection.Seq[Boolean] => LatticeObject)
 
 }
 
@@ -639,7 +639,7 @@ class ProductLattice[A <: AbsLattice, B <: AbsLattice] private (val a : A, val b
       Iterator single topEl
 
   def asRelation(obj : LatticeObject,
-                 xa : Seq[Seq[ITerm]], xb : Seq[Seq[ITerm]]) : List[IFormula] =
+                 xa : collection.Seq[collection.Seq[ITerm]], xb : collection.Seq[collection.Seq[ITerm]]) : List[IFormula] =
     if (conjunction)
       for ((f, g) <- a.asRelation(obj._1, xa, xb) zip b.asRelation(obj._2, xa, xb))
       yield (f & g)
@@ -648,7 +648,7 @@ class ProductLattice[A <: AbsLattice, B <: AbsLattice] private (val a : A, val b
       b.asRelation(obj._2, xa.drop(a.arity), xb.drop(a.arity))
 
   def asRelation(obj : LatticeObject,
-                 xa : Seq[Seq[ITerm]], x : Seq[Seq[ITerm]], xb : Seq[Seq[ITerm]])
+                 xa : collection.Seq[collection.Seq[ITerm]], x : collection.Seq[collection.Seq[ITerm]], xb : collection.Seq[collection.Seq[ITerm]])
                 : List[(IFormula, IFormula)] =
     if (conjunction)
       for (((f1, f2), (g1, g2)) <-
@@ -658,8 +658,8 @@ class ProductLattice[A <: AbsLattice, B <: AbsLattice] private (val a : A, val b
       a.asRelation(obj._1, xa.take(a.arity), x.take(a.arity), xb.take(a.arity)) ++ 
       b.asRelation(obj._2, xa.drop(a.arity), x.drop(a.arity), xb.drop(a.arity))
 
-  def genBooleanEncoding(xa : Seq[Seq[ITerm]], xb : Seq[Seq[ITerm]], p : SimpleAPI)
-                        : (Seq[IFormula], Seq[Boolean] => LatticeObject) =
+  def genBooleanEncoding(xa : collection.Seq[collection.Seq[ITerm]], xb : collection.Seq[collection.Seq[ITerm]], p : SimpleAPI)
+                        : (collection.Seq[IFormula], collection.Seq[Boolean] => LatticeObject) =
     if (conjunction) {
       val (aFlags, aFun) = a.genBooleanEncoding(xa, xb, p)
       val (bFlags, bFun) = b.genBooleanEncoding(xa, xb, p)
@@ -781,8 +781,8 @@ abstract class BitSetLattice(width : Int, val name : String) extends AbsLattice 
 
   def predNum(x: LatticeObject): Int = x.size
 
-  def genBooleanEncoding(xa : Seq[Seq[ITerm]], xb : Seq[Seq[ITerm]], p : SimpleAPI)
-                        : (Seq[IFormula], Seq[Boolean] => LatticeObject) = {
+  def genBooleanEncoding(xa : collection.Seq[collection.Seq[ITerm]], xb : collection.Seq[collection.Seq[ITerm]], p : SimpleAPI)
+                        : (collection.Seq[IFormula], collection.Seq[Boolean] => LatticeObject) = {
     import p._
     val flags = createBooleanVariables(width)
     for (i <- top.iterator)
@@ -796,17 +796,17 @@ abstract class BitSetLattice(width : Int, val name : String) extends AbsLattice 
 ////////////////////////////////////////////////////////////////////////////////
 
 object TermSubsetLattice {
-  def apply(termsCosts : Seq[(ITerm, Int)], name : String = "") = {
+  def apply(termsCosts : collection.Seq[(ITerm, Int)], name : String = "") = {
     val objseq = termsCosts.unzip._1.toIndexedSeq
     val cmap = termsCosts.toMap
     new TermSubsetLattice(objseq, cmap, name)
   }
-  def apply(objseq: Seq[ITerm], cmap: Map[ITerm, Int]) = {
+  def apply(objseq: collection.Seq[ITerm], cmap: Map[ITerm, Int]) = {
     new TermSubsetLattice(objseq, cmap, "")
   }
 }
 
-class TermSubsetLattice private (objseq: Seq[ITerm],
+class TermSubsetLattice private (objseq: collection.Seq[ITerm],
                                  costMap : Map[ITerm, Int],
                                  _name : String)
       extends BitSetLattice(objseq.size, _name) {
@@ -828,7 +828,7 @@ class TermSubsetLattice private (objseq: Seq[ITerm],
     for ((t, i) <- objseq.iterator.zipWithIndex; if (obj contains i)) yield t
 
   def asRelation(obj: LatticeObject,
-                 xa : Seq[Seq[ITerm]], xb : Seq[Seq[ITerm]]) : List[IFormula] = {
+                 xa : collection.Seq[collection.Seq[ITerm]], xb : collection.Seq[collection.Seq[ITerm]]) : List[IFormula] = {
     import IExpression._
 //    if (xa.isEmpty) return List(new IBoolLit(true))
     List(and(for ((t, i) <- objseq.iterator.zipWithIndex; if (obj contains i)) yield {
@@ -837,7 +837,7 @@ class TermSubsetLattice private (objseq: Seq[ITerm],
   }
 
   def asRelation(obj: LatticeObject,
-                 xa : Seq[Seq[ITerm]], x : Seq[Seq[ITerm]], xb : Seq[Seq[ITerm]])
+                 xa : collection.Seq[collection.Seq[ITerm]], x : collection.Seq[collection.Seq[ITerm]], xb : collection.Seq[collection.Seq[ITerm]])
                 : List[(IFormula, IFormula)] =
    List((asRelation(obj, xa, x).head, asRelation(obj, x, xb).head))
 
@@ -892,14 +892,14 @@ class TermSubsetLattice private (objseq: Seq[ITerm],
 ////////////////////////////////////////////////////////////////////////////////
 
 object TermIneqLattice {
-  def apply(lowerBounds : Seq[(ITerm, Int)], name : String = "") =
+  def apply(lowerBounds : collection.Seq[(ITerm, Int)], name : String = "") =
     new TermIneqLattice(lowerBounds.unzip._1.toIndexedSeq,
                         lowerBounds.toMap,
                         name)
 }
 
 // Base case class
-class TermIneqLattice private (lowerBounds: Seq[ITerm],
+class TermIneqLattice private (lowerBounds: collection.Seq[ITerm],
                                lowerCostMap : Map[ITerm, Int],
                                _name : String)
       extends BitSetLattice(lowerBounds.size, _name) {
@@ -924,7 +924,7 @@ class TermIneqLattice private (lowerBounds: Seq[ITerm],
          if (obj contains i)) yield t
 
   def asRelation(obj: LatticeObject,
-                 xa : Seq[Seq[ITerm]], xb : Seq[Seq[ITerm]]) : List[IFormula] = {
+                 xa : collection.Seq[collection.Seq[ITerm]], xb : collection.Seq[collection.Seq[ITerm]]) : List[IFormula] = {
     import IExpression._
 //    if (xa.isEmpty) return List(new IBoolLit(true))
     List(and(for (t <- getTerms(obj)) yield {
@@ -933,7 +933,7 @@ class TermIneqLattice private (lowerBounds: Seq[ITerm],
   }
 
   def asRelation(obj: LatticeObject,
-                 xa : Seq[Seq[ITerm]], x : Seq[Seq[ITerm]], xb : Seq[Seq[ITerm]])
+                 xa : collection.Seq[collection.Seq[ITerm]], x : collection.Seq[collection.Seq[ITerm]], xb : collection.Seq[collection.Seq[ITerm]])
                 : List[(IFormula, IFormula)] =
    List((asRelation(obj, xa, x).head, asRelation(obj, x, xb).head))
 
@@ -944,14 +944,14 @@ class TermIneqLattice private (lowerBounds: Seq[ITerm],
 ////////////////////////////////////////////////////////////////////////////////
 
 object PredicateLattice {
-  def apply(predicateCosts : Seq[(IFormula, Int)], name : String = "") =
+  def apply(predicateCosts : collection.Seq[(IFormula, Int)], name : String = "") =
     new PredicateLattice(predicateCosts.unzip._1.toIndexedSeq,
                          predicateCosts.toMap,
                          name)
 }
 
 // Base case class
-class PredicateLattice private (predicates: Seq[IFormula],
+class PredicateLattice private (predicates: collection.Seq[IFormula],
                                 costMap : Map[IFormula, Int],
                                 _name : String)
       extends BitSetLattice(predicates.size, _name) {
@@ -971,7 +971,7 @@ class PredicateLattice private (predicates: Seq[IFormula],
   protected def bitCost(bit : Int) : Int = bitCostMap(bit)
 
   def asRelation(obj: LatticeObject,
-                 xa : Seq[Seq[ITerm]], xb : Seq[Seq[ITerm]]) : List[IFormula] = {
+                 xa : collection.Seq[collection.Seq[ITerm]], xb : collection.Seq[collection.Seq[ITerm]]) : List[IFormula] = {
     import IExpression._
 //    if (xa.isEmpty) return List(new IBoolLit(true))
     List(and(for ((t, i) <- predicates.iterator.zipWithIndex; if (obj contains i)) yield {
@@ -980,7 +980,7 @@ class PredicateLattice private (predicates: Seq[IFormula],
   }
 
   def asRelation(obj: LatticeObject,
-                 xa : Seq[Seq[ITerm]], x : Seq[Seq[ITerm]], xb : Seq[Seq[ITerm]])
+                 xa : collection.Seq[collection.Seq[ITerm]], x : collection.Seq[collection.Seq[ITerm]], xb : collection.Seq[collection.Seq[ITerm]])
                 : List[(IFormula, IFormula)] =
    List((asRelation(obj, xa, x).head, asRelation(obj, x, xb).head))
 
@@ -1098,15 +1098,15 @@ abstract class ExtendingLattice[BaseLattice <: AbsLattice](val baseLattice : Bas
   def cost(obj : LatticeObject) : Int = baseLattice.cost(obj)
 
   def asRelation(obj : LatticeObject,
-                 xa : Seq[Seq[ITerm]], xb : Seq[Seq[ITerm]]) : List[IFormula] =
+                 xa : collection.Seq[collection.Seq[ITerm]], xb : collection.Seq[collection.Seq[ITerm]]) : List[IFormula] =
     baseLattice.asRelation(obj, xa, xb)
 
-  def asRelation(obj : LatticeObject,  xa : Seq[Seq[ITerm]], x : Seq[Seq[ITerm]], 
-                 xb : Seq[Seq[ITerm]]) : List[(IFormula, IFormula)] =
+  def asRelation(obj : LatticeObject,  xa : collection.Seq[collection.Seq[ITerm]], x : collection.Seq[collection.Seq[ITerm]], 
+                 xb : collection.Seq[collection.Seq[ITerm]]) : List[(IFormula, IFormula)] =
     baseLattice.asRelation(obj, xa, x, xb)
 
-  def genBooleanEncoding(xa : Seq[Seq[ITerm]], xb : Seq[Seq[ITerm]], p : SimpleAPI)
-                        : (Seq[IFormula], Seq[Boolean] => LatticeObject) =
+  def genBooleanEncoding(xa : collection.Seq[collection.Seq[ITerm]], xb : collection.Seq[collection.Seq[ITerm]], p : SimpleAPI)
+                        : (collection.Seq[IFormula], collection.Seq[Boolean] => LatticeObject) =
     throw new UnsupportedOperationException
 
   // The reduced lattice corresponding to this lattice

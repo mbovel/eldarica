@@ -49,7 +49,7 @@ class PredicateMiner[CC]
          pred <- preds.toIndexedSeq)
     yield pred
 
-  def printPreds(preds : Seq[RelationSymbolPred]) : Unit = {
+  def printPreds(preds : collection.Seq[RelationSymbolPred]) : Unit = {
     val rses = preds.map(_.rs).distinct.sortBy(_.name)
     for (rs <- rses) {
       println("" + rs + ":")
@@ -77,8 +77,8 @@ class PredicateMiner[CC]
    * to show satisfiability of the problem. The method will try to
    * remove the first predicates in the sequence first.
    */
-  def minimizePredSet(preds : Seq[RelationSymbolPred])
-                    : Seq[RelationSymbolPred] = {
+  def minimizePredSet(preds : collection.Seq[RelationSymbolPred])
+                    : collection.Seq[RelationSymbolPred] = {
     var curPredicates = preds.toSet
 
     for (pred <- preds) {
@@ -94,8 +94,8 @@ class PredicateMiner[CC]
    * Find the predicates within the given set of predicates that are
    * elements of every minimal sufficient set of predicates.
    */
-  def necessaryPredicates(preds : Seq[RelationSymbolPred])
-                        : Seq[RelationSymbolPred] = {
+  def necessaryPredicates(preds : collection.Seq[RelationSymbolPred])
+                        : collection.Seq[RelationSymbolPred] = {
     val result = new ArrayBuffer[RelationSymbolPred]
     val allPreds = preds.toSet
 
@@ -129,7 +129,7 @@ class PredicateMiner[CC]
   private object PredGenException extends Exception
 
   private def exceptionalPredGen(d : Dag[AndOrNode[NormClause, Unit]]) 
-                               : Either[Seq[(Predicate, Seq[Conjunction])],
+                               : Either[collection.Seq[(Predicate, collection.Seq[Conjunction])],
                                         Dag[(IAtom, NormClause)]] =
    throw PredGenException
 

@@ -324,11 +324,11 @@ object HornBip {
 /*
 ParametricEncoder(system : ParametricEncoder.System,
                   globalVarNum : Int,
-                  backgroundAxioms : Option[Seq[ITerm] => IFormula],
+                  backgroundAxioms : Option[collection.Seq[ITerm] => IFormula],
                   timeSpec : ParametricEncoder.TimeSpec,
-                  timeInvariants : Seq[HornClauses.Clause],
-                  assertions : Seq[HornClauses.Clause],
-                  invariants : Seq[Seq[Int]]
+                  timeInvariants : collection.Seq[HornClauses.Clause],
+                  assertions : collection.Seq[HornClauses.Clause],
+                  invariants : collection.Seq[collection.Seq[Int]]
 )
 */
 

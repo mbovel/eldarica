@@ -37,15 +37,15 @@ import lazabs.types._
 object BipAst {
   // BIP module
   case class BModule(
-    val connectorTypes:              Seq[BConnectorType],
+    val connectorTypes:              collection.Seq[BConnectorType],
     val compoundType:                BCompoundType
   )
 
   // compound type
   case class BCompoundType(
-    val connectors:                  Seq[BConnector],
+    val connectors:                  collection.Seq[BConnector],
     val compToNum:                   Map[String,Int],                  // map from component name to integer
-    val components:                  Seq[BComponent]
+    val components:                  collection.Seq[BComponent]
   )
   
   // component object
@@ -63,7 +63,7 @@ object BipAst {
   // connector type
   case class BConnectorType(
     val name:                        String,
-    val portParams:                  Seq[BParameter]
+    val portParams:                  collection.Seq[BParameter]
   )
 
   case class BPortReference(
@@ -75,15 +75,15 @@ object BipAst {
   case class BConnector(
     val name:                        String,
     val typeName:                    String,
-    val referedPorts:                Seq[BPortReference]
+    val referedPorts:                collection.Seq[BPortReference]
   )
 
   // atomic type for components
   case class BAtomicType(
-    val ports:                       Seq[BParameter],                  // ports defined in the atomic type
+    val ports:                       collection.Seq[BParameter],                  // ports defined in the atomic type
     val placeToNum:                  Map[String,Int],                  // map from place to integer
     val initial:                     String,
-    val transitions:                 Seq[BTransition]
+    val transitions:                 collection.Seq[BTransition]
   )
 
   // transition

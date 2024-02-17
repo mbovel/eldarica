@@ -82,8 +82,8 @@ object RelyGuarantee {
   /**
    * adding the required clauses to set channel variables in a C function 
    */
-  def funcWithSync: (Seq[HornClause]) = {
-    var newCls = Seq[HornClause]()
+  def funcWithSync: (collection.Seq[HornClause]) = {
+    var newCls = collection.Seq[HornClause]()
     // the case of having both a data assignment and a function call on the same transition 
     uppaal.automata.foreach{ aut =>
       aut.transitions.values.flatten.foreach {
@@ -161,8 +161,8 @@ object RelyGuarantee {
   /**
    * creating local clauses
    */
-  def getLocalClauses(toAbs: Boolean) : (Seq[HornClause], Map[String, AbsLattice]) = {
-    val newFunctions: Map[String,(String,String,List[Variable],Seq[HornClause])]  = uppaal.automata.map{_.transitions.values.flatten}.flatten.map{ trans => trans match {
+  def getLocalClauses(toAbs: Boolean) : (collection.Seq[HornClause], Map[String, AbsLattice]) = {
+    val newFunctions: Map[String,(String,String,List[Variable],collection.Seq[HornClause])]  = uppaal.automata.map{_.transitions.values.flatten}.flatten.map{ trans => trans match {
       case UppTransition(dest, Some(UppReceiveAction(sync)), Right(FunctionCall(funcName, args)), guard) =>
         uppaal.functions.get(funcName) match {
           case Some((startName, endName, variables, cls)) =>
@@ -242,7 +242,7 @@ object RelyGuarantee {
   /**
    * creating rely clauses
    */
-  def getRelyClauses(toAbs : Boolean): (Seq[HornClause]) = uppaal.automata.map{ 
+  def getRelyClauses(toAbs : Boolean): (collection.Seq[HornClause]) = uppaal.automata.map{ 
     aut => {
       if(toAbs)
         absMap += (("E" + aut.name) -> createAbstractionEnv(uppaal.clocks.size, 
@@ -297,7 +297,7 @@ object RelyGuarantee {
   /**
    * creating guarantee clauses
    */
-  def guarantee: (Seq[HornClause]) = uppaal.automata.map{ aut =>
+  def guarantee: (collection.Seq[HornClause]) = uppaal.automata.map{ aut =>
     aut.states.map{ vertex =>
       aut.transitions.getOrElse(vertex, Set()).map{ transition =>
 
@@ -493,7 +493,7 @@ object RelyGuarantee {
     }.flatten // States
   }.flatten // Automata
 
-  def apply(fileName: String, toAbs : Boolean = false): (Seq[HornClause], Option[Map[String, AbsLattice]]) = {
+  def apply(fileName: String, toAbs : Boolean = false): (collection.Seq[HornClause], Option[Map[String, AbsLattice]]) = {
     this.fileName = fileName
    // println((local ++ rely ++ guarantee).map(lazabs.viewer.HornPrinter.printDebug(_)).mkString("\n\n"))
     val (localc, absMaplocal) = getLocalClauses(toAbs)

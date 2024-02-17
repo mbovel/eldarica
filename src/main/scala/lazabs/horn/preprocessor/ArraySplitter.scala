@@ -168,7 +168,7 @@ class ArraySplitter extends HornPreprocessor {
     }
 
     def postVisit(t : IExpression,
-                  arg : Unit, subres : Seq[IExpression]) : IExpression =
+                  arg : Unit, subres : collection.Seq[IExpression]) : IExpression =
       t match {
 
         case ISortedVariable(ind, ClonedArraySort(sort)) =>
@@ -207,7 +207,7 @@ class ArraySplitter extends HornPreprocessor {
   //////////////////////////////////////////////////////////////////////////////
 
   private def translateClauses(clauses : Clauses)
-                       : (Map[Predicate, Predicate], Seq[(Clause, Clause)]) = {
+                       : (Map[Predicate, Predicate], collection.Seq[(Clause, Clause)]) = {
     val predsToUpdate =
       (for (key@PredArgument(pred, n) <- symClasses.elements;
             if newArrayTheories contains symClasses(key))
@@ -285,7 +285,7 @@ class ArraySplitter extends HornPreprocessor {
     }
 
     def postVisit(t : IExpression,
-                  arg : Unit, subres : Seq[IExpression]) : IExpression =
+                  arg : Unit, subres : collection.Seq[IExpression]) : IExpression =
       t match {
 
         case t@IConstant(c) =>
@@ -434,12 +434,12 @@ class ArraySplitter extends HornPreprocessor {
           // nothing
       }
 
-    private def addUnknownTerms(ts : Seq[ITerm], clauseNum : Int) : Unit =
+    private def addUnknownTerms(ts : collection.Seq[ITerm], clauseNum : Int) : Unit =
       for (t <- ts)
         addUnknownTerm(t, clauseNum)
 
     def postVisit(t : IExpression,
-                  clauseNum : Int, subres : Seq[Unit]) : Unit = ()
+                  clauseNum : Int, subres : collection.Seq[Unit]) : Unit = ()
   }
 
 }

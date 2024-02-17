@@ -26,7 +26,7 @@ class DepthFirstForwardSymexUnitTests
               val p2 = createRelation("p2", List(Sort.Integer))
               val x  = createConstant("x")
 
-              val clauses: Seq[Clause] = List(
+              val clauses: collection.Seq[Clause] = List(
                 p0(x) :- (x > 2),
                 p1(x) :- (p0(x), x > 0),
                 p0(x - 1) :- p1(x),
@@ -46,7 +46,7 @@ class DepthFirstForwardSymexUnitTests
               val p2 = createRelation("p2", List(Sort.Integer))
               val x  = createConstant("x")
 
-              val clauses: Seq[Clause] = List(
+              val clauses: collection.Seq[Clause] = List(
                 p0(x) :- (x > 2),
                 p1(x) :- (p0(x), x >= 0),
                 p0(x - 1) :- p1(x),
@@ -76,7 +76,7 @@ class DepthFirstForwardSymexUnitTests
                 }
                */
 
-              val clauses: Seq[Clause] = List(
+              val clauses: collection.Seq[Clause] = List(
                 p0(x, i) :- (x === 10, i === 0),
                 p1(x, i) :- (p0(x, i), i === 3 & 5 - i >= 1),
                 p0(x - 2, i + 1) :- p1(x, i),
@@ -106,7 +106,7 @@ class DepthFirstForwardSymexUnitTests
                 }
                */
 
-              val clauses: Seq[Clause] = List(
+              val clauses: collection.Seq[Clause] = List(
                 p0(x, i) :- (x === 10, i === 0),
                 p0(x - 2, i + 1) :- (p0(x, i), i =/= 3 & 5 - i >= 1),
                 p1(x, i) :- (p0(x, i), i === 3 & 5 - i >= 1),
@@ -131,7 +131,7 @@ class DepthFirstForwardSymexUnitTests
               val x   = createConstants("x", 1 to 10)
               val a   = createConstants("a", 1 to 10, arr.sort)
 
-              val clauses: Seq[Clause] = List(
+              val clauses: collection.Seq[Clause] = List(
                 p0(a(1), x(0)) :- (a(0) === arr
                   .const(0), a(1) === arr
                   .store(a(0), x(0), 5), x(0) >= 0), // a[x0] = 5
@@ -157,7 +157,7 @@ class DepthFirstForwardSymexUnitTests
               val x   = createConstants("x", 1 to 10)
               val a   = createConstants("a", 1 to 10, arr.sort)
 
-              val clauses: Seq[Clause] = List(
+              val clauses: collection.Seq[Clause] = List(
                 p0(a(1), x(0)) :- (a(0) === arr
                   .const(0), a(1) === arr
                   .store(a(0), x(0), 5), x(0) >= 0), // a[x0] = 5
@@ -183,7 +183,7 @@ class DepthFirstForwardSymexUnitTests
               val p2 = createRelation("p2", List(Sort.Integer))
               val x  = createConstant("x")
 
-              val clauses: Seq[Clause] = List(
+              val clauses: collection.Seq[Clause] = List(
                 p0(x) :- true,
                 p1(x) :- (p0(x), x >= 1),
                 p0(x - 1) :- p1(x),
@@ -204,7 +204,7 @@ class DepthFirstForwardSymexUnitTests
               val p0 = createRelation("p0", List(Sort.Integer))
               val x  = createConstant("x")
 
-              val clauses: Seq[Clause] = List(
+              val clauses: collection.Seq[Clause] = List(
                 p0(x) :- (x === 42)
               )
 
@@ -220,7 +220,7 @@ class DepthFirstForwardSymexUnitTests
               val p0 = createRelation("p0", List(Sort.Integer))
               val x  = createConstant("x")
 
-              val clauses: Seq[Clause] = List(
+              val clauses: collection.Seq[Clause] = List(
                 p0(x) :- (x === 42),
                 (x === 42) :- p0(x)
               )
@@ -234,7 +234,7 @@ class DepthFirstForwardSymexUnitTests
               val p0 = createRelation("p0", List(Sort.Integer))
               val x  = createConstant("x")
 
-              val clauses: Seq[Clause] = List(
+              val clauses: collection.Seq[Clause] = List(
                 p0(x) :- (x === 42),
                 (x =/= 42) :- p0(x)
               )
@@ -251,7 +251,7 @@ class DepthFirstForwardSymexUnitTests
               val p1 = createRelation("p1", List(Sort.Integer))
               val x  = createConstant("x")
 
-              val clauses: Seq[Clause] = List(
+              val clauses: collection.Seq[Clause] = List(
                 p0(x) :- (x === 42),
                 p1(x) :- (x === 3)
               )
@@ -268,7 +268,7 @@ class DepthFirstForwardSymexUnitTests
               val x = createConstant("x")
               val p = createRelation("p", List(Sort.Integer))
 
-              val clauses: Seq[Clause] = List(
+              val clauses: collection.Seq[Clause] = List(
                 p(x) :- (x < 0), // resolution with this is unsat
                 p(x) :- (x > 0), // resolution with this is sat
                 false :- (p(x), x < 0)
@@ -283,7 +283,7 @@ class DepthFirstForwardSymexUnitTests
               val x = createConstant("x")
               val p = createRelation("p", List(Sort.Integer))
 
-              val clauses: Seq[Clause] = List(
+              val clauses: collection.Seq[Clause] = List(
                 p(x) :- (x > 0), // resolution with this is sat
                 p(x) :- (x < 0), // resolution with this is unsat
                 false :- (p(x), x < 0)
@@ -300,7 +300,7 @@ class DepthFirstForwardSymexUnitTests
               val x  = createConstant("x")
               val p0 = createRelation("p0", List(Sort.Integer))
 
-              val clauses: Seq[Clause] = List(
+              val clauses: collection.Seq[Clause] = List(
                 (x === 42) :- (p0(x), x === 42)
               )
               val symex =
@@ -313,7 +313,7 @@ class DepthFirstForwardSymexUnitTests
               val p0 = createRelation("p0", List(Sort.Integer))
               val x  = createConstant("x")
 
-              val clauses: Seq[Clause] = List(
+              val clauses: collection.Seq[Clause] = List(
                 (x === 42) :- p0(x)
               )
               val symex =
@@ -327,7 +327,7 @@ class DepthFirstForwardSymexUnitTests
             scope {
               val x = createConstant("x")
 
-              val clauses: Seq[Clause] = List(
+              val clauses: collection.Seq[Clause] = List(
                 (x === 42) :- true
               )
               val symex =

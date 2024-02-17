@@ -59,7 +59,7 @@ object SymexExample1Sat extends App {
       val x  = createConstant("x")
       val y  = createConstant("y")
 
-      val clauses: Seq[Clause] = List(
+      val clauses: collection.Seq[Clause] = List(
         p0(x) :- (x > 2),
         p1(x) :- (p0(x), x > 0),
         p0(x - 1) :- p1(x),
@@ -91,7 +91,7 @@ object DFSExample1_1Unsat extends App {
       val p2 = createRelation("p2", List(Sort.Integer))
       val x  = createConstant("x")
 
-      val clauses: Seq[Clause] = List(
+      val clauses: collection.Seq[Clause] = List(
         p0(x) :- (x > 2),
         p1(x) :- (p0(x), x >= 0),
         p0(x - 1) :- p1(x),
@@ -124,7 +124,7 @@ object DFSExample1_2Unsat extends App {
       val x  = createConstant("x")
       val x2 = createConstant("x'")
 
-      val clauses: Seq[Clause] = List(
+      val clauses: collection.Seq[Clause] = List(
         p0(x) :- true,
         p1(x) :- (p0(x), x >= 1),
         p0(x - 1) :- p1(x),
@@ -156,7 +156,7 @@ object DFSExample2Sat extends App {
       val x   = createConstants("x", 1 to 10)
       val a   = createConstants("a", 1 to 10, arr.sort)
 
-      val clauses: Seq[Clause] = List(
+      val clauses: collection.Seq[Clause] = List(
         p0(a(1), x(0)) :- (a(0) === arr
           .const(0), a(1) === arr
           .store(a(0), x(0), 5), x(0) >= 0), // a[x0] = 5
@@ -193,7 +193,7 @@ object DFSArrayExample extends App {
       val a2   = createConstant("a2", arr.sort)
 
 
-      val clauses: Seq[Clause] = List(
+      val clauses: collection.Seq[Clause] = List(
         p0(arr.const(x), x) :- (x > 10),
         p0(a2, x-1) :- (p0(a1, x), x > 0, a2 === arr.store(a1, x, arr.select(a1,x+1)-1)), // x1 = a[x0], i.e., 5
         p1(a1, x) :- (p0(a1, x), x <= 0),
@@ -224,7 +224,7 @@ object DFSExample2Unsat extends App {
       val x   = createConstants("x", 1 to 10)
       val a   = createConstants("a", 1 to 10, arr.sort)
 
-      val clauses: Seq[Clause] = List(
+      val clauses: collection.Seq[Clause] = List(
         p0(a(1), x(0)) :- (a(0) === arr
           .const(0), a(1) === arr
           .store(a(0), x(0), 5), x(0) >= 0), // a[x0] = 5
@@ -257,7 +257,7 @@ object DFSExample3NonTermination extends App {
       val old_x = createConstant("old_x")
       val p1    = createRelation("p", List(Sort.Integer, Sort.Integer))
 
-      val clauses: Seq[Clause] = List(
+      val clauses: collection.Seq[Clause] = List(
         p1(x, old_x) :- (x === old_x),
         p1(x, old_x) :- p1(x - 1, old_x),
         false :- (p1(x, old_x), x =/= old_x)
@@ -289,7 +289,7 @@ object BFSExample1 extends App {
       // clause with the last assertion), but naive depth-first exploration
       // gets stuck in exploring the middle recursive clause.
       // Breadth-first search does not have this issue.
-      val clauses: Seq[Clause] = List(
+      val clauses: collection.Seq[Clause] = List(
         p(x, n) :- (x === 0, n >= 0),
         p(x + 1, n) :- (p(x, n), x <= n),
         false :- (p(x, n), x >= n)
@@ -316,7 +316,7 @@ object BFSExample11 extends App {
       val p0 = createRelation("p0", List(Sort.Integer))
       val x  = createConstant("x")
 
-      val clauses: Seq[Clause] = List(
+      val clauses: collection.Seq[Clause] = List(
         (x === 42) :- p0(x)
       )
 
@@ -343,7 +343,7 @@ object BFSNonlinearExample1 extends App {
       val p = createRelation("p", List(Sort.Integer))
       val q = createRelation("q", List(Sort.Integer))
 
-      val clauses: Seq[Clause] = List(
+      val clauses: collection.Seq[Clause] = List(
         p(x) :- (x === 20),
         q(y) :- (y === 22),
         false :- (p(x), q(y), (x + y =/= 42))
@@ -372,7 +372,7 @@ object BFSNonlinearExample2 extends App {
       val p = createRelation("p", List(Sort.Integer))
       val q = createRelation("q", List(Sort.Integer))
 
-      val clauses: Seq[Clause] = List(
+      val clauses: collection.Seq[Clause] = List(
         p(x) :- (x === 20),
         q(y) :- (y === 22),
         false :- (p(x), q(y), (x + y === 42))
@@ -402,7 +402,7 @@ object BFSNonlinearExample3 extends App {
       val p1 = createRelation("p1", List(Sort.Integer))
       val q  = createRelation("q", List(Sort.Integer))
 
-      val clauses: Seq[Clause] = List(
+      val clauses: collection.Seq[Clause] = List(
         p(x) :- (x === 20),
         p1(x) :- p(x),
         q(x + 2) :- p1(x),
@@ -433,7 +433,7 @@ object BFSNonlinearExample4 extends App {
       val p1 = createRelation("p1", List(Sort.Integer))
       val q  = createRelation("q", List(Sort.Integer))
 
-      val clauses: Seq[Clause] = List(
+      val clauses: collection.Seq[Clause] = List(
         p(x) :- (x === 20),
         p1(x) :- p(x),
         q(x + 1) :- p1(x),
@@ -465,7 +465,7 @@ object BFSNonlinearExample5 extends App {
       val f1 = createRelation("f1", List(Sort.Integer))
       val f2 = createRelation("f2", List(Sort.Integer, Sort.Integer))
 
-      val clauses: Seq[Clause] = List(
+      val clauses: collection.Seq[Clause] = List(
         f1(10) :- true,
         f2(x, y) :- (f1(x), f2(x - 1, y - 1), x > 0),
         f2(x, y) :- (f1(x), x <= 0, 0 === y),
@@ -530,7 +530,7 @@ object BFSFibonacci extends App {
       }
        */
 
-      val clauses: Seq[Clause] = List(
+      val clauses: collection.Seq[Clause] = List(
         p0() :- true,
         p1(c) :- (p0(), f_post(4, c)),
         f0(n, n) :- (f_pre(n)),
@@ -599,7 +599,7 @@ object BFSTakeuchi extends App {
       val tak4     = createRelation("tak4", 6)
       val tak5     = createRelation("tak5", 9)
 
-      val clauses: Seq[Clause] = List(
+      val clauses: collection.Seq[Clause] = List(
         main2(x, y, z, _res6) :- (main1(x, y, z), tak_post(x, y, z, _res6)),
         main1(x, y, z) :- (main0(x, y, z), x - y >= 1 & z >= y),
         main0(x, y, z) :- true,
@@ -656,7 +656,7 @@ object BFSWithNoDepth1 extends App {
       val p0 = createRelation("p0", List(Sort.Integer))
       val x  = createConstant("x")
 
-      val clauses: Seq[Clause] = List(
+      val clauses: collection.Seq[Clause] = List(
           p0(x)   :- (x === 0),
           p0(x+1) :- p0(x),
           false   :- (p0(x), x > 20)
@@ -683,7 +683,7 @@ object BFSWithDepth1 extends App {
       val p0 = createRelation("p0", List(Sort.Integer))
       val x  = createConstant("x")
 
-      val clauses: Seq[Clause] = List(
+      val clauses: collection.Seq[Clause] = List(
         p0(x)   :- (x === 0),
         p0(x+1) :- p0(x),
         false   :- (p0(x), x > 20)

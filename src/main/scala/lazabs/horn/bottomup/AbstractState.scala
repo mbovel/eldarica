@@ -36,7 +36,7 @@ import scala.collection.mutable.PriorityQueue
 
 import Util._
 
-  case class AbstractState(rs : RelationSymbol, preds : Seq[RelationSymbolPred]) {
+  case class AbstractState(rs : RelationSymbol, preds : collection.Seq[RelationSymbolPred]) {
     val instances = toStream {
       case i => for (p <- preds) yield (p negInstances i)
     }
@@ -59,10 +59,10 @@ import Util._
 
   trait StateQueue {
     type TimeType
-    type Expansion = (Seq[AbstractState], NormClause, Conjunction, TimeType)
+    type Expansion = (collection.Seq[AbstractState], NormClause, Conjunction, TimeType)
     def isEmpty : Boolean
     def size : Int
-    def enqueue(states : Seq[AbstractState],
+    def enqueue(states : collection.Seq[AbstractState],
                 clause : NormClause, assumptions : Conjunction) : Unit
     def enqueue(exp : Expansion) : Unit
     def dequeue : Expansion
@@ -72,12 +72,12 @@ import Util._
 
   class ListStateQueue extends StateQueue {
     type TimeType = Unit
-    private var states = List[(Seq[AbstractState], NormClause, Conjunction)]()
+    private var states = List[(collection.Seq[AbstractState], NormClause, Conjunction)]()
     def isEmpty : Boolean =
       states.isEmpty
     def size : Int =
       states.size
-    def enqueue(s : Seq[AbstractState],
+    def enqueue(s : collection.Seq[AbstractState],
                 clause : NormClause, assumptions : Conjunction) : Unit = {
       states = (s, clause, assumptions) :: states
 //      println("enqueuing ... " +  (s, clause, assumptions))
@@ -123,7 +123,7 @@ import Util._
       states.isEmpty
     def size : Int =
       states.size
-    def enqueue(s : Seq[AbstractState],
+    def enqueue(s : collection.Seq[AbstractState],
                 clause : NormClause, assumptions : Conjunction) : Unit = {
       states += ((s, clause, assumptions, time))
     }

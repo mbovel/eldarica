@@ -39,9 +39,9 @@ import lazabs.horn.bottomup.HornClauses
 import scala.collection.mutable.{LinkedHashSet, LinkedHashMap}
 
 object DepGraph {
-  def apply(orig : Seq[HornClauses.Clause]) = new DepGraph(orig)
+  def apply(orig : collection.Seq[HornClauses.Clause]) = new DepGraph(orig)
 } 
-class DepGraph(orig : Seq[HornClauses.Clause]) extends AbsGraph {
+class DepGraph(orig : collection.Seq[HornClauses.Clause]) extends AbsGraph {
   override type Node = DepNode
   override type Edge = DepEdge
   
@@ -83,7 +83,7 @@ class DepGraph(orig : Seq[HornClauses.Clause]) extends AbsGraph {
   override def nodes() : Iterable[Node] = n.values
   override def edges() : Iterable[Edge] = e.values
   
-  override def filterPrefix(pref : Seq[Edge]) : Boolean = {
+  override def filterPrefix(pref : collection.Seq[Edge]) : Boolean = {
     val c = HornManipulate.inlineSequence(pref.map(_.c))
     !PrincessFlataWrappers.isSat(c.constraint)
   }
@@ -104,7 +104,7 @@ class DepGraph(orig : Seq[HornClauses.Clause]) extends AbsGraph {
 object HornManipulate {
   
   // inline a sequence of Horn clauses
-  def inlineSequence(cycle : Seq[HornClauses.Clause]) : HornClauses.Clause = {
+  def inlineSequence(cycle : collection.Seq[HornClauses.Clause]) : HornClauses.Clause = {
     val i = cycle.reverseIterator
     var selfLoop = i.next
     
@@ -125,15 +125,15 @@ object HornManipulate {
 
 object HornAccelerate {
   
-  def accelerate(orig : Seq[HornClauses.Clause])
-       : Seq[(HornClauses.Clause, Seq[HornClauses.Clause])] =
+  def accelerate(orig : collection.Seq[HornClauses.Clause])
+       : collection.Seq[(HornClauses.Clause, collection.Seq[HornClauses.Clause])] =
     (new HornAccelerate(orig)).accelerate
 
   val CYCLES_TO_ACCELERATE = 3
 
 }
 
-class HornAccelerate(orig : Seq[HornClauses.Clause]) {
+class HornAccelerate(orig : collection.Seq[HornClauses.Clause]) {
 
   import HornAccelerate.CYCLES_TO_ACCELERATE
   import HornClauses.FALSE
@@ -272,17 +272,17 @@ class HornAccelerate(orig : Seq[HornClauses.Clause]) {
     ret
   }
   
-  def accelerate() : Seq[(HornClauses.Clause, Seq[HornClauses.Clause])] = {
+  def accelerate() : collection.Seq[(HornClauses.Clause, collection.Seq[HornClauses.Clause])] = {
     
     val sccs = dg.Tarjan.nontrivial
 
-    var hc : List[(HornClauses.Clause, Seq[HornClauses.Clause])] = Nil
+    var hc : List[(HornClauses.Clause, collection.Seq[HornClauses.Clause])] = Nil
     
     // for each nontrivial scc  
     for (scc <- sccs) {
       // find arbitrary cycle
 //      val n = scc(0)
-//      val cycle : Seq[this.dg.DepEdge] = dg.anyPath(n, n, scc).get
+//      val cycle : collection.Seq[this.dg.DepEdge] = dg.anyPath(n, n, scc).get
 
       val cycles = (for (n <- scc.iterator;
                          p <- dg.simplePaths(n, n, scc.toSet).iterator;

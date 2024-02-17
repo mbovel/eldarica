@@ -47,7 +47,7 @@ object IntervalPropagator {
   val WIDENING_THRESHOLD = 5
   val INTERVAL_PROP_THRESHOLD = 20
 
-  def isConsistent(ints : Seq[(Option[IdealInt], Option[IdealInt])]) =
+  def isConsistent(ints : collection.Seq[(Option[IdealInt], Option[IdealInt])]) =
     ints forall {
       case (Some(a), Some(b)) if (a > b) => false
       case _ => true
@@ -115,7 +115,7 @@ object IntervalPropagator {
 
 }
 
-class IntervalPropagator(clauses : IndexedSeq[NormClause],
+class IntervalPropagator(clauses : Indexedcollection.Seq[NormClause],
                          reducerSettings : ReducerSettings) {
 
   import HornPredAbs._
@@ -138,7 +138,7 @@ class IntervalPropagator(clauses : IndexedSeq[NormClause],
      }).toArray
 
   val rsBoundCache =
-    new MHashMap[RelationSymbol, Seq[(Option[IdealInt], Option[IdealInt])]]
+    new MHashMap[RelationSymbol, collection.Seq[(Option[IdealInt], Option[IdealInt])]]
 
   val clausesWithHead = (0 until clauses.size) groupBy (i => clauses(i).head._1)
 
@@ -189,8 +189,8 @@ class IntervalPropagator(clauses : IndexedSeq[NormClause],
     if (lazabs.GlobalParameters.get.log)
       print("Constant and interval propagation ")
 
-    val rsBoundUpdateNum = new MHashMap[RelationSymbol, Seq[(Int, Int)]] {
-      override def default(rs : RelationSymbol) : Seq[(Int, Int)] =
+    val rsBoundUpdateNum = new MHashMap[RelationSymbol, collection.Seq[(Int, Int)]] {
+      override def default(rs : RelationSymbol) : collection.Seq[(Int, Int)] =
         for (_ <- 0 until rs.arity) yield (0, 0)
     }
 
@@ -352,7 +352,7 @@ class IntervalPropagator(clauses : IndexedSeq[NormClause],
   //////////////////////////////////////////////////////////////////////////////
   // Assemble results
 
-  val result : Seq[(NormClause, NormClause)] =
+  val result : collection.Seq[(NormClause, NormClause)] =
     (for ((clause, clauseNum) <- clauses.iterator.zipWithIndex;
           if (!extendedConstraints(clauseNum).isFalse)) yield {
        if (modifiedClauses contains clauseNum) {

@@ -85,7 +85,7 @@ object HornClauses {
     lazy val predicates =
       (for (IAtom(p, _) <- (Iterator single head) ++ body.iterator) yield p).toSet
 
-    lazy val theories : Seq[Theory] = {
+    lazy val theories : collection.Seq[Theory] = {
       val coll = new TheoryCollector
       coll(head)
       for (a <- body)
@@ -100,7 +100,7 @@ object HornClauses {
      * Inline the given head arguments, and return the resulting set of body
      * literals, and the new constraint.
      */
-    def inline(args : Seq[ITerm]) : (Seq[IAtom], IFormula) =
+    def inline(args : collection.Seq[ITerm]) : (collection.Seq[IAtom], IFormula) =
       if (headCanDirectlyBeInlined && allTermsSimple(args)) {
         val replacement =
           new MHashMap[ConstantTerm, ITerm]
@@ -163,7 +163,7 @@ object HornClauses {
       }
     }
 
-    def refresh : (Clause, Seq[ConstantTerm]) = {
+    def refresh : (Clause, collection.Seq[ConstantTerm]) = {
       val consts =
         constants.toSeq.sortWith(_.name < _.name)
       val newConsts =
@@ -299,29 +299,29 @@ object HornClauses {
     /**
      * Argument sorts of the predicate
      */
-    lazy val argumentSorts : Seq[Sort] =
+    lazy val argumentSorts : collection.Seq[Sort] =
       predArgumentSorts(predicate)
 
     /**
      * (Ordered) list of arguments that are relevant for a clause,
      * i.e., the arguments that actually occur in the clause constraint.
      */
-    val relevantArguments : Seq[Int]
+    val relevantArguments : collection.Seq[Int]
 
     override def toString = predicate.toString
   }
 
   trait ConstraintClause {
     def head : Literal
-    def body : Seq[Literal]
+    def body : collection.Seq[Literal]
     def localVariableNum : Int
-    def instantiateConstraint(headArguments : Seq[ConstantTerm],
-                              bodyArguments: Seq[Seq[ConstantTerm]],
-                              localVariables : Seq[ConstantTerm],
+    def instantiateConstraint(headArguments : collection.Seq[ConstantTerm],
+                              bodyArguments: collection.Seq[collection.Seq[ConstantTerm]],
+                              localVariables : collection.Seq[ConstantTerm],
                               sig : Signature) : Conjunction
-    def instantiateConstraint(headArguments : Seq[ConstantTerm],
-                              bodyArguments: Seq[Seq[ConstantTerm]],
-                              localVariables : Seq[ConstantTerm],
+    def instantiateConstraint(headArguments : collection.Seq[ConstantTerm],
+                              bodyArguments: collection.Seq[collection.Seq[ConstantTerm]],
+                              localVariables : collection.Seq[ConstantTerm],
                               order : TermOrder) : Conjunction =
       instantiateConstraint(headArguments, bodyArguments, localVariables,
                             Signature(Set(), Set(), order.orderedConstants, order))
@@ -335,9 +335,9 @@ object HornClauses {
   //////////////////////////////////////////////////////////////////////////////
 
   trait IConstraintClause extends ConstraintClause {
-    def instantiateConstraint(headArguments : Seq[ConstantTerm],
-                              bodyArguments: Seq[Seq[ConstantTerm]],
-                              localVariables : Seq[ConstantTerm],
+    def instantiateConstraint(headArguments : collection.Seq[ConstantTerm],
+                              bodyArguments: collection.Seq[collection.Seq[ConstantTerm]],
+                              localVariables : collection.Seq[ConstantTerm],
                               sig : Signature) : Conjunction = {
       import IExpression._
 
@@ -358,9 +358,9 @@ object HornClauses {
                   order2),
           order2))
     }
-    def iInstantiateConstraint(headArguments : Seq[ConstantTerm],
-                               bodyArguments: Seq[Seq[ConstantTerm]],
-                               localVariables : Seq[ConstantTerm]) : IFormula
+    def iInstantiateConstraint(headArguments : collection.Seq[ConstantTerm],
+                               bodyArguments: collection.Seq[collection.Seq[ConstantTerm]],
+                               localVariables : collection.Seq[ConstantTerm]) : IFormula
   }
   
   //////////////////////////////////////////////////////////////////////////////
@@ -409,11 +409,11 @@ object HornClauses {
     } */
 
     def head : Literal = sLit(c.head.pred)
-    def body : Seq[Literal] = for (a <- c.body) yield sLit(a.pred)
+    def body : collection.Seq[Literal] = for (a <- c.body) yield sLit(a.pred)
     def localVariableNum : Int = 0
-    def instantiateConstraint(headArguments : Seq[ConstantTerm],
-                              bodyArguments: Seq[Seq[ConstantTerm]],
-                              localVariables : Seq[ConstantTerm],
+    def instantiateConstraint(headArguments : collection.Seq[ConstantTerm],
+                              bodyArguments: collection.Seq[collection.Seq[ConstantTerm]],
+                              localVariables : collection.Seq[ConstantTerm],
                               sig : Signature) : Conjunction = {
       val headEqs =
         c.head.args === headArguments

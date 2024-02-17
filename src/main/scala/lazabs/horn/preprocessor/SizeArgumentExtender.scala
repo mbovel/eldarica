@@ -49,7 +49,7 @@ class SizeArgumentExtender extends ArgumentExpander {
   val name = "adding size arguments"
 
   def expand(pred : Predicate, argNum : Int, sort : Sort)
-           : Option[(Seq[(ITerm, Sort, String)], Option[ITerm])] = {
+           : Option[(collection.Seq[(ITerm, Sort, String)], Option[ITerm])] = {
     val adtSort = sort.asInstanceOf[ADT.ADTProxySort]
     if ((usedTheories contains adtSort.adtTheory) &&
           adtSort.adtTheory.termSize != null &&

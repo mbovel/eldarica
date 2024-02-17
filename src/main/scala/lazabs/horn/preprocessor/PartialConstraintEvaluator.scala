@@ -155,7 +155,7 @@ class PartialConstraintEvaluator extends HornPreprocessor {
       case _ =>
         KeepArg
     }
-    def postVisit(t : IExpression, arg : Unit, subres : Seq[Unit]) : Unit = ()
+    def postVisit(t : IExpression, arg : Unit, subres : collection.Seq[Unit]) : Unit = ()
   }
 
 }

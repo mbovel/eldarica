@@ -59,7 +59,7 @@ object HeapExpander {
     def expand(pred : Predicate,
                argNum : Int,
                sort : HeapSort)
-             : Option[Seq[(ITerm, Sort, String)]]
+             : Option[collection.Seq[(ITerm, Sort, String)]]
   }
 
 }
@@ -68,7 +68,7 @@ object HeapExpander {
 class HeapModifyExtractor(allocs : ArrayBuffer[IFunApp],
                           writes : ArrayBuffer[IFunApp], theory : Heap)
   extends CollectingVisitor[Int, Unit] {
-  def postVisit(t : IExpression, boundVars : Int, subres : Seq[Unit]) : Unit =
+  def postVisit(t : IExpression, boundVars : Int, subres : collection.Seq[Unit]) : Unit =
     t match {
       case f@IFunApp(theory.alloc, _) => allocs += f
       case f@IFunApp(theory.write, _) => writes += f
@@ -103,7 +103,7 @@ class HeapExpander(val name : String,
     val newPreds =
       new MHashMap[Predicate,
                    (Predicate,                         // new predicate
-                    Seq[Option[Seq[(ITerm, Sort, String)]]], // additional arguments
+                    collection.Seq[Option[collection.Seq[(ITerm, Sort, String)]]], // additional arguments
                     Map[Int, Int])]                    // argument mapping,
                                                        //   needed for
                                                        //   VerifHintElement
@@ -113,7 +113,7 @@ class HeapExpander(val name : String,
       new MHashMap[Predicate,
                    (Predicate,                         // old predicate
                     List[ITerm],                       // solution substitution
-                    Seq[ITerm])]                       // argument list for
+                    collection.Seq[ITerm])]                       // argument list for
                                                        //   counterexamples
 
     //
@@ -123,7 +123,7 @@ class HeapExpander(val name : String,
     for (pred <- predicates; if !(frozenPredicates contains pred)) {
       val oldSorts   = predArgumentSorts(pred)
       val newSorts   = new ArrayBuffer[Sort]
-      val addedArgs  = new ArrayBuffer[Option[Seq[(ITerm, Sort, String)]]]
+      val addedArgs  = new ArrayBuffer[Option[collection.Seq[(ITerm, Sort, String)]]]
       val argMapping = new MHashMap[Int, Int]
       val solSubst   = new ArrayBuffer[ITerm]
       val cexArgs    = new ArrayBuffer[ITerm]
@@ -341,7 +341,7 @@ object HeapSizeArgumentExtender {
     def expand(pred : Predicate,
                argNum : Int,
                sort : HeapSort)
-             : Option[Seq[(ITerm, Sort, String)]] = {
+             : Option[collection.Seq[(ITerm, Sort, String)]] = {
       val sizefun = sort.heapTheory.counter
       Some(List((sizefun(v(0)), Sort.Nat, "heap_size")))
     }

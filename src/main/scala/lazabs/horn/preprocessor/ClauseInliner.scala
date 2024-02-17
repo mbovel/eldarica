@@ -169,7 +169,7 @@ class ClauseInliner extends HornPreprocessor {
         }
 
       private def transformCEXFragment(rootAtom : IAtom,
-                                       bodyAtoms : Seq[IAtom],
+                                       bodyAtoms : collection.Seq[IAtom],
                                        dag : Dag[Option[Clause]])
                                       (implicit p : SimpleAPI)
                                       : CounterExample = p.scope {
@@ -261,9 +261,9 @@ class ClauseInliner extends HornPreprocessor {
               case (d, _) => DagNode(None, List(), d) })
   }
 
-  private def elimLinearDefs(allClauses : Seq[HornClauses.Clause],
+  private def elimLinearDefs(allClauses : collection.Seq[HornClauses.Clause],
                              hints : VerificationHints)
-                  : (Seq[HornClauses.Clause], VerificationHints) = {
+                  : (collection.Seq[HornClauses.Clause], VerificationHints) = {
     var changed = true
     var clauses = allClauses
     var removedPreds : Set[Predicate] = Set()

@@ -40,7 +40,7 @@ import lazabs.horn.bottomup.Util.Dag
 import ap.parser._
 
 object Solve {
-  def apply(clauseSet: Seq[HornClause], 
+  def apply(clauseSet: collection.Seq[HornClause], 
             uppaalAbsMap: Option[Map[String, AbsLattice]], 
             global: Boolean, 
             disjunctive : Boolean, 

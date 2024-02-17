@@ -55,10 +55,10 @@ object PredicateStore {
    * terms. This is sometimes a way to get rid of quantifiers in
    * interpolants over arrays.
    */
-  class InstantiatingVisitor(terms : Map[Sort, Seq[ITerm]])
+  class InstantiatingVisitor(terms : Map[Sort, collection.Seq[ITerm]])
                        extends CollectingVisitor[Unit, IExpression] {
     def postVisit(t : IExpression, arg : Unit,
-                  subres : Seq[IExpression]) : IExpression =
+                  subres : collection.Seq[IExpression]) : IExpression =
       (t update subres) match {
         case ISortedQuantified(q, s, f)
             if terms.contains(s) =>
@@ -129,7 +129,7 @@ class PredicateStore[CC]
     for (pred <- preds) addRelationSymbolPred(pred)
 
   def addHasherAssertions(clause : NormClause,
-                          from : Seq[AbstractState]) = if (hasher.isActive) {
+                          from : collection.Seq[AbstractState]) = if (hasher.isActive) {
     hasher assertFormula clauseHashIndexes(clause)
     for ((state, (rs, occ)) <- from.iterator zip clause.body.iterator)
       for (pred <- state.preds) {
@@ -138,7 +138,7 @@ class PredicateStore[CC]
       }
   }
 
-  def addIPredicates(preds : Map[Predicate, Seq[IFormula]]) : Unit =
+  def addIPredicates(preds : Map[Predicate, collection.Seq[IFormula]]) : Unit =
     for ((p, preds) <- preds) {
       val rs = relationSymbols(p)
       for (f <- preds) {
@@ -221,10 +221,10 @@ class PredicateStore[CC]
   
   //////////////////////////////////////////////////////////////////////////////
 
-  def preparePredicates(preds : Seq[(Predicate, Seq[Conjunction])])
-                      : Map[RelationSymbol, IndexedSeq[RelationSymbolPred]] = {
+  def preparePredicates(preds : collection.Seq[(Predicate, collection.Seq[Conjunction])])
+                      : Map[RelationSymbol, Indexedcollection.Seq[RelationSymbolPred]] = {
     val predsToAdd =
-      new MHashMap[RelationSymbol, IndexedSeq[RelationSymbolPred]]
+      new MHashMap[RelationSymbol, Indexedcollection.Seq[RelationSymbolPred]]
 
     for ((p, fors) <- preds) {
       val rs = relationSymbols(p)
@@ -352,7 +352,7 @@ class PredicateStore[CC]
    * theory-specific back-translation.
    */
   def convertToInputAbsy(p : Predicate,
-                         cs : Seq[Conjunction]) : Seq[IFormula] =
+                         cs : collection.Seq[Conjunction]) : collection.Seq[IFormula] =
     cs match {
       case Seq(c) if c.isTrue =>
         List(IBoolLit(true))

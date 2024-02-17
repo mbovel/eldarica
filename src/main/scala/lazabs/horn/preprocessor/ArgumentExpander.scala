@@ -80,7 +80,7 @@ abstract class ArgumentExpander extends HornPreprocessor {
    * _1, ...</code> for this purpose.
    */
   def expand(pred : Predicate, argNum : Int, sort : Sort)
-           : Option[(Seq[(ITerm, Sort, String)], Option[ITerm])]
+           : Option[(collection.Seq[(ITerm, Sort, String)], Option[ITerm])]
 
   /**
    * Optionally, apply a postprocessor to solution formulas.
@@ -97,7 +97,7 @@ abstract class ArgumentExpander extends HornPreprocessor {
     val newPreds =
       new MHashMap[Predicate,
                    (Predicate,                         // new predicate
-                    Seq[Option[(Seq[(ITerm, Sort, String)],
+                    collection.Seq[Option[(collection.Seq[(ITerm, Sort, String)],
                                 Option[ITerm])]],      // additional arguments
                     Map[Int, Int])]                    // argument mapping,
                                                        //   needed for
@@ -108,7 +108,7 @@ abstract class ArgumentExpander extends HornPreprocessor {
       new MHashMap[Predicate,
                    (Predicate,                         // old predicate
                     List[ITerm],                       // solution substitution
-                    Seq[ITerm])]                       // argument list for
+                    collection.Seq[ITerm])]                       // argument list for
                                                        //   counterexamples
 
     //
@@ -118,7 +118,7 @@ abstract class ArgumentExpander extends HornPreprocessor {
     for (pred <- predicates; if !(frozenPredicates contains pred)) {
       val oldSorts   = predArgumentSorts(pred)
       val newSorts   = new ArrayBuffer[Sort]
-      val addedArgs  = new ArrayBuffer[Option[(Seq[(ITerm, Sort, String)],
+      val addedArgs  = new ArrayBuffer[Option[(collection.Seq[(ITerm, Sort, String)],
                                                Option[ITerm])]]
       val argMapping = new MHashMap[Int, Int]
       val solSubst   = new ArrayBuffer[ITerm]

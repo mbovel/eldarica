@@ -198,8 +198,8 @@ object Slicer extends HornPreprocessor {
 
   private def computeHeapArgMapping(newClause : Clause,
                                     oldClause : Clause,
-                                    oldBodyStates : Seq[IAtom],
-                                    newHeadArgs : Seq[ITerm])
+                                    oldBodyStates : collection.Seq[IAtom],
+                                    newHeadArgs : collection.Seq[ITerm])
                                   : Map[ConstantTerm, ITerm] = {
     val Clause(newHead, newBody, newConstraint) = newClause
     val Clause(oldHead, oldBody, oldConstraint) = oldClause
@@ -465,7 +465,7 @@ object Slicer extends HornPreprocessor {
           KeepArg
       }
 
-    def postVisit(t : IExpression, arg : Unit, subres : Seq[Unit]) : Unit = ()
+    def postVisit(t : IExpression, arg : Unit, subres : collection.Seq[Unit]) : Unit = ()
   }
 
 }

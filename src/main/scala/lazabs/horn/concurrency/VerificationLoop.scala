@@ -50,25 +50,25 @@ object VerificationLoop {
   import HornClauses.Clause
   import ParametricEncoder._
 
-  abstract sealed class CEXStep(val newStates : Seq[IAtom])
-  case class CEXInit     (_newStates : Seq[IAtom],
-                          clauses : Seq[Clause])             extends CEXStep(_newStates)
-  case class CEXLocalStep(_newStates : Seq[IAtom],
+  abstract sealed class CEXStep(val newStates : collection.Seq[IAtom])
+  case class CEXInit     (_newStates : collection.Seq[IAtom],
+                          clauses : collection.Seq[Clause])             extends CEXStep(_newStates)
+  case class CEXLocalStep(_newStates : collection.Seq[IAtom],
                           processIndex : Int,
                           clause : Clause)                   extends CEXStep(_newStates)
-  case class CEXCommStep (_newStates : Seq[IAtom],
+  case class CEXCommStep (_newStates : collection.Seq[IAtom],
                           channel : CommChannel,
                           senderIndex : Int,
                           senderClause : Clause,
                           receiverIndex : Int,
                           receiverClause : Clause)           extends CEXStep(_newStates)
-  case class CEXBarrierStep(_newStates : Seq[IAtom],
+  case class CEXBarrierStep(_newStates : collection.Seq[IAtom],
                             barrier : Barrier,
-                            clauses : Seq[(Int, Clause)])    extends CEXStep(_newStates)
-  case class CEXTimeElapse(_newStates : Seq[IAtom],
+                            clauses : collection.Seq[(Int, Clause)])    extends CEXStep(_newStates)
+  case class CEXTimeElapse(_newStates : collection.Seq[IAtom],
                            delay : (Int, Int))               extends CEXStep(_newStates)
 
-  type Counterexample = Seq[CEXStep]
+  type Counterexample = collection.Seq[CEXStep]
 
   //////////////////////////////////////////////////////////////////////////////
 
@@ -82,10 +82,10 @@ object VerificationLoop {
       ((" " * ((colWidth - shortened.size)/2)) + s).padTo(colWidth, ' ')
     }
 
-    def asColumns(strs : Seq[IAtom]) =
+    def asColumns(strs : collection.Seq[IAtom]) =
       println((for (x <- strs) yield toColWidth(SimpleAPI pp x)) mkString "")
 
-    def inColumns(data : Map[Int, Seq[String]]) = {
+    def inColumns(data : Map[Int, collection.Seq[String]]) = {
       val cols = (for ((c, _) <- data) yield c).max + 1
       val rows = (for ((_, lines) <- data) yield lines.size).max
       for (row <- 0 until rows) {
@@ -97,7 +97,7 @@ object VerificationLoop {
       }
     }
 
-    var lastStates : Seq[IAtom] = null
+    var lastStates : collection.Seq[IAtom] = null
 
     for (step <- cex) {
       println("-" * totalWidth)
@@ -151,7 +151,7 @@ object VerificationLoop {
     println("-" * totalWidth)
   }
 
-  private def diagonalInvariants(n : Int) : Seq[Seq[Int]] =
+  private def diagonalInvariants(n : Int) : collection.Seq[collection.Seq[Int]] =
     for (i <- 0 until n)
     yield ((List tabulate n) { j => if (i == j) 1 else 0 })
 
@@ -160,7 +160,7 @@ object VerificationLoop {
 ////////////////////////////////////////////////////////////////////////////////
 
 class VerificationLoop(system : ParametricEncoder.System,
-                       initialInvariants : Seq[Seq[Int]] = null) {
+                       initialInvariants : collection.Seq[collection.Seq[Int]] = null) {
 
   import VerificationLoop._
   import ParametricEncoder._
@@ -171,7 +171,7 @@ class VerificationLoop(system : ParametricEncoder.System,
   val result = {
     val processNum = system.processes.size
 
-    var invariants : Seq[Seq[Int]] =
+    var invariants : collection.Seq[collection.Seq[Int]] =
       initialInvariants match {
         case null =>
           diagonalInvariants(processNum)
@@ -316,7 +316,7 @@ class VerificationLoop(system : ParametricEncoder.System,
 
           var currentStates : Array[IAtom] = null
 
-          def findModifiedIndexes(newStates : Seq[IAtom]) : (List[Int], List[IAtom]) = {
+          def findModifiedIndexes(newStates : collection.Seq[IAtom]) : (List[Int], List[IAtom]) = {
             val remaining = new ArrayBuffer[(IAtom, Int)]
             val unmatched = new ArrayBuffer[IAtom]
             remaining ++= currentStates.iterator.zipWithIndex
@@ -333,7 +333,7 @@ class VerificationLoop(system : ParametricEncoder.System,
             ((remaining.iterator map (_._2)).toList, unmatched.toList)
           }
 
-          def updateGlobalVars(newGlobalVars : Seq[ITerm]) : Unit =
+          def updateGlobalVars(newGlobalVars : collection.Seq[ITerm]) : Unit =
             for (i <- 0 until currentStates.size) {
               val IAtom(p, args) = currentStates(i)
               currentStates(i) = IAtom(p, newGlobalVars ++ (args drop globalVarNum))

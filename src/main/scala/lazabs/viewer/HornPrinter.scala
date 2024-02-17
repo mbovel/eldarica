@@ -34,14 +34,14 @@ import lazabs.horn.global._
 import lazabs.horn.parser.HornReader
 
 object HornPrinter {
-  /*def apply(system: Seq[HornClause]): String =  system.toList.sortWith((x, y) => (x.head,y.head) match {
+  /*def apply(system: collection.Seq[HornClause]): String =  system.toList.sortWith((x, y) => (x.head,y.head) match {
     case (RelVar(varId1, _),RelVar(varId2, _)) => (varId1 < varId2)
     case (RelVar(varId1, _),_) => true
     case (_,RelVar(varId1, _)) => false
     case (_,_) => true
   }).map(print).mkString("\n")*/
 
-  def apply(system: Seq[HornClause]): String =  system.map(print).mkString("\n")
+  def apply(system: collection.Seq[HornClause]): String =  system.map(print).mkString("\n")
   /**
    * gets the alphabetic character corresponding to an int 
    */

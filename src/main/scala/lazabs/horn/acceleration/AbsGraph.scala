@@ -127,17 +127,17 @@ abstract class AbsGraph { thisGraph =>
   }
   
   
-  def filterPrefix(pref : Seq[Edge]) : Boolean = false
+  def filterPrefix(pref : collection.Seq[Edge]) : Boolean = false
   
   // finds a path 'from' --> 'to' that traverses only nodes in 'via'
   // TODO: filter infeasible paths
-  def anyPath(from : Node, to : Node, via : Iterable[Node]) : Option[Seq[Edge]] = {
+  def anyPath(from : Node, to : Node, via : Iterable[Node]) : Option[collection.Seq[Edge]] = {
     val s = via.toSet + from + to
     val b = new scala.collection.mutable.ListBuffer[Node]
     val seen = new scala.collection.mutable.HashSet[Node]
     val m = new scala.collection.mutable.HashMap[Node,Edge]
     
-    def construct(from : Node, last : Edge) : Seq[Edge] = {
+    def construct(from : Node, last : Edge) : collection.Seq[Edge] = {
       var ret = last :: Nil
       var e = last
       while (e.from != from) {
@@ -177,8 +177,8 @@ abstract class AbsGraph { thisGraph =>
 
   def simplePaths(from : Node,
                   to   : Node,
-                  via  : Set[Node]) : Iterable[Seq[Edge]] = {
-    val buf = new ArrayBuffer[Seq[Edge]]
+                  via  : Set[Node]) : Iterable[collection.Seq[Edge]] = {
+    val buf = new ArrayBuffer[collection.Seq[Edge]]
     simplePathsHelp(from, to, via,
                     List(), if (from == to) Set() else Set(to), buf)
     buf.toSeq
@@ -189,7 +189,7 @@ abstract class AbsGraph { thisGraph =>
                       via  : Set[Node],
                       suff : List[Edge],
                       seen : Set[Node],
-                      acc  : Buffer[Seq[Edge]]) : Unit = {
+                      acc  : Buffer[collection.Seq[Edge]]) : Unit = {
     if (from == to)
       acc += suff
 

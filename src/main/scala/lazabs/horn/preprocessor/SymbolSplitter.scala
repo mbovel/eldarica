@@ -84,12 +84,12 @@ object SymbolSplitter extends HornPreprocessor {
 
       // duplicate relation symbols with concrete arguments
 
-      val predMapping       = new MHashMap[(Predicate, Seq[ITerm]), Predicate]
+      val predMapping       = new MHashMap[(Predicate, collection.Seq[ITerm]), Predicate]
       val clauseBackMapping = new MHashMap[Clause, Clause]
       val nameFactory       = NameFactory predNameFactory clauses
 
       def renamePred(p : Predicate,
-                     concreteArgs : Seq[Option[ITerm]]) : Option[Predicate] = {
+                     concreteArgs : collection.Seq[Option[ITerm]]) : Option[Predicate] = {
         val fixedArgPositions = concreteArgsPerPred(p)
         if (fixedArgPositions.isEmpty) {
           None
@@ -106,7 +106,7 @@ object SymbolSplitter extends HornPreprocessor {
       }
 
       def renameFormalArgs(p : Predicate,
-                           args : Seq[ITerm]) : Seq[ITerm] = {
+                           args : collection.Seq[ITerm]) : collection.Seq[ITerm] = {
         val fixedArgPositions = concreteArgsPerPred(p)
         val sorts = predArgumentSorts(p)
         (for ((arg, argNum) <- args.iterator.zipWithIndex) yield {
@@ -315,14 +315,14 @@ object SymbolSplitter extends HornPreprocessor {
       }
     }
 
-    def constantArgs(a : IAtom) : Seq[Option[ITerm]] =
+    def constantArgs(a : IAtom) : collection.Seq[Option[ITerm]] =
       for (p <- a.args zip predArgumentSorts(a.pred)) yield p match {
         case (ConcreteTerm(t), s) => Some(wrapBool(t, s))
         case _                    => None
       }
   }
 
-  private def concreteArguments(clause : Clause) : Seq[Seq[Option[ITerm]]] = {
+  private def concreteArguments(clause : Clause) : collection.Seq[collection.Seq[Option[ITerm]]] = {
     val prop = new ClausePropagator(clause)
     try {
       prop.propagate

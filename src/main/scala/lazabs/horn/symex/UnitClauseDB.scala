@@ -56,7 +56,7 @@ class UnitClauseDB(preds: Set[RelationSymbol]) {
   private var cucs: collection.immutable.Vector[UnitClause] = Vector()
 
   private var cucParents
-    : collection.immutable.Vector[(UnitClause, (NormClause, Seq[UnitClause]))] =
+    : collection.immutable.Vector[(UnitClause, (NormClause, collection.Seq[UnitClause]))] =
     Vector()
 
   private case class FrameInfo(numCUCs:                Int,
@@ -80,7 +80,7 @@ class UnitClauseDB(preds: Set[RelationSymbol]) {
    * @param child to return parents for
    * @return optionally, the parents for the child unit clause
    */
-  def parentsOption(child: UnitClause): Option[(NormClause, Seq[UnitClause])] =
+  def parentsOption(child: UnitClause): Option[(NormClause, collection.Seq[UnitClause])] =
     cucParents find (_._1 == child) match {
       case Some((_, parents)) => Some(parents)
       case None               => None
@@ -128,7 +128,7 @@ class UnitClauseDB(preds: Set[RelationSymbol]) {
   /**
    * Returns the sequence of clauses added to the database since last push.
    */
-  def clausesSinceLastPush: Seq[UnitClause] = {
+  def clausesSinceLastPush: collection.Seq[UnitClause] = {
     val numCucsInFrame = cucs.length - frameStack.top.numCUCs
     if (numCucsInFrame > 0)
       cucs takeRight numCucsInFrame
@@ -145,7 +145,7 @@ class UnitClauseDB(preds: Set[RelationSymbol]) {
    * @return true if inserted, false if unit clause exists in the database
    */
   def add(clause:  UnitClause,
-          parents: (NormClause, Seq[UnitClause])): Boolean = {
+          parents: (NormClause, collection.Seq[UnitClause])): Boolean = {
     if (cucs contains clause) {
       false
     } else {

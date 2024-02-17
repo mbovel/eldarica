@@ -49,7 +49,7 @@ object HornPredAbs {
   import TerForConvenience._
   import SymbolFactory.normalPreprocSettings
 
-  def predArgumentSorts(pred : Predicate) : Seq[Sort] =
+  def predArgumentSorts(pred : Predicate) : collection.Seq[Sort] =
     MonoSortedPredicate argumentSorts pred
 
   def toInternal(f : IFormula, sig : Signature) : Conjunction =
@@ -79,7 +79,7 @@ object HornPredAbs {
         val predicate = headPred
         val relevantArguments = (0 until predicate.arity).toSeq
       }
-      def body : Seq[Literal] =
+      def body : collection.Seq[Literal] =
         (for (((RelationSymbol(pred), _), relSyms) <-
               bodyLits.iterator zip nc.relevantBodySyms.iterator)
          yield new Literal {
@@ -87,9 +87,9 @@ object HornPredAbs {
            val relevantArguments = relSyms
          }).toSeq
       def localVariableNum : Int = nc.localSymbols.size
-      def instantiateConstraint(headArguments : Seq[ConstantTerm],
-                                bodyArguments: Seq[Seq[ConstantTerm]],
-                                localVariables : Seq[ConstantTerm],
+      def instantiateConstraint(headArguments : collection.Seq[ConstantTerm],
+                                bodyArguments: collection.Seq[collection.Seq[ConstantTerm]],
+                                localVariables : collection.Seq[ConstantTerm],
                                 sig : Signature) : Conjunction =
         nc.substituteSyms(localVariables, headArguments, bodyArguments)(sig.order)
       override def collectTheories(coll : TheoryCollector) : Unit =
@@ -103,9 +103,9 @@ object HornPredAbs {
 
 class HornPredAbs[CC]
                  (iClauses : Iterable[CC],
-                  initialPredicates : Map[Predicate, Seq[IFormula]],
+                  initialPredicates : Map[Predicate, collection.Seq[IFormula]],
                   predicateGenerator : Dag[AndOrNode[NormClause, Unit]] =>
-                                       Either[Seq[(Predicate, Seq[Conjunction])],
+                                       Either[collection.Seq[(Predicate, collection.Seq[Conjunction])],
                                               Dag[(IAtom, NormClause)]],
                   counterexampleMethod : CEGAR.CounterexampleMethod.Value =
                                            CEGAR.CounterexampleMethod.FirstBestShortest)
@@ -149,7 +149,7 @@ class HornPredAbs[CC]
   /**
    * A set of predicates that is sufficient to solve the set of Horn clauses.
    */
-  lazy val relevantRawPredicates : Map[Predicate, Seq[Conjunction]] = {
+  lazy val relevantRawPredicates : Map[Predicate, collection.Seq[Conjunction]] = {
     import TerForConvenience._
     implicit val order = sf.order
 
@@ -171,14 +171,14 @@ class HornPredAbs[CC]
   /**
    * A set of predicates that is sufficient to solve the set of Horn clauses.
    */
-  lazy val relevantPredicates : Map[Predicate, Seq[IFormula]] =
+  lazy val relevantPredicates : Map[Predicate, collection.Seq[IFormula]] =
     for ((p, preds) <- relevantRawPredicates) yield {
       p -> convertToInputAbsy(p, preds)
     }
 
   //////////////////////////////////////////////////////////////////////////////
 
-  lazy val relevantDisjuncts : Map[Predicate, Seq[Conjunction]] = {
+  lazy val relevantDisjuncts : Map[Predicate, collection.Seq[Conjunction]] = {
     import TerForConvenience._
     implicit val order = sf.order
 

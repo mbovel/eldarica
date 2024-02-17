@@ -35,7 +35,7 @@ import ap.theories.Theory
 import lazabs.horn.bottomup.SymbolFactory
 import collection.mutable.{HashMap => MHashMap}
 
-class SymexSymbolFactory(theories: Seq[Theory], prover: SimpleAPI)
+class SymexSymbolFactory(theories: collection.Seq[Theory], prover: SimpleAPI)
     extends SymbolFactory(theories) {
 
   /**
@@ -47,11 +47,11 @@ class SymexSymbolFactory(theories: Seq[Theory], prover: SimpleAPI)
    * substitution performance.
    */
   private var localSymbolsForPredicate
-    : Map[Predicate, Int => Seq[ConstantTerm]] = _
+    : Map[Predicate, Int => collection.Seq[ConstantTerm]] = _
 
   private val lastLocalSymbolIdForPredicate = new MHashMap[Predicate, Int]
 
-  private val existingTerms = new MHashMap[(Predicate, Int), Seq[ConstantTerm]]
+  private val existingTerms = new MHashMap[(Predicate, Int), collection.Seq[ConstantTerm]]
 
   /**
    * This method must be called to initialize the symbol factory after the
@@ -63,7 +63,7 @@ class SymexSymbolFactory(theories: Seq[Theory], prover: SimpleAPI)
     // todo: this is a workaround for the previous stream implementation
     //  for some reason the stream version caused non-termination in
     //  one test case (BFS Fibonacci) - Scala bug?
-    def f(pred: Predicate, maxOcc: Int)(symbolId: Int): Seq[ConstantTerm] = {
+    def f(pred: Predicate, maxOcc: Int)(symbolId: Int): collection.Seq[ConstantTerm] = {
       if (existingTerms contains (pred, symbolId))
         existingTerms((pred, symbolId))
       else {
@@ -102,7 +102,7 @@ class SymexSymbolFactory(theories: Seq[Theory], prover: SimpleAPI)
    */
   def localSymbolsForPred(pred:       Predicate,
                           numSymbols: Int,
-                          occ:        Int): Seq[ConstantTerm] =
+                          occ:        Int): collection.Seq[ConstantTerm] =
     if (localSymbolsForPredicate == null) {
       throw new NullPointerException(
         "SymexSymbolFactory must be initialized first. " +

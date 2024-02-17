@@ -95,13 +95,13 @@ object Util {
     def iterator : Iterator[D] =
       for (DagNode(d, _, _) <- subdagIterator) yield d
 
-    def incoming(n : Int) : Seq[(Int, Int)] = incomingIterator(n).toList
+    def incoming(n : Int) : collection.Seq[(Int, Int)] = incomingIterator(n).toList
     def incomingIterator(n : Int) : Iterator[(Int, Int)] =
       for ((DagNode(_, children, _), i) <- subdagIterator.zipWithIndex;
            (c, ci) <- children.iterator.zipWithIndex;
            if (i + c == n)) yield (i, ci)
 
-    def pathFromRoot(n : Int) : Seq[(Int, Int)] = {
+    def pathFromRoot(n : Int) : collection.Seq[(Int, Int)] = {
       var res = List[(Int, Int)]()
       var k = n
       while (k > 0) {

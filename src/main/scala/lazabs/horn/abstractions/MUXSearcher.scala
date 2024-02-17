@@ -43,7 +43,7 @@ import scala.collection.mutable.{ArrayBuffer, HashSet => MHashSet,
 
 
 class MUXSearcher(lattice : AbsLattice,
-                  xa : Seq[Seq[ITerm]], xb : Seq[Seq[ITerm]],
+                  xa : collection.Seq[collection.Seq[ITerm]], xb : collection.Seq[collection.Seq[ITerm]],
                   p : SimpleAPI) {
   import p._
   import IExpression._

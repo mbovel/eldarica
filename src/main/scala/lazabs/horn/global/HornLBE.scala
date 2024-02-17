@@ -37,7 +37,7 @@ object HornLBE {
   /**
    * extracts the unique linear non-recursive clauses from a set of clauses that does not make a cycle 
    */
-  def UniqueLinearNonRec(clauses: Seq[HornClause]): Seq[HornClause] = {
+  def UniqueLinearNonRec(clauses: collection.Seq[HornClause]): collection.Seq[HornClause] = {
     val headToClauses = clauses.filter {
       case HornClause(Interp(_),_) => false
       case _ => true
@@ -65,9 +65,9 @@ object HornLBE {
   /**
    * inlines a set of non-recursive Horn clauses until fix-point
    */
-  def inlineUntilFixpoint(originalClauses: Seq[HornClause],rules: HashMap[String,HornClause]): Seq[HornClause] = {
+  def inlineUntilFixpoint(originalClauses: collection.Seq[HornClause],rules: HashMap[String,HornClause]): collection.Seq[HornClause] = {
     var changed = true
-    var finishedClauses = Seq[HornClause]()
+    var finishedClauses = collection.Seq[HornClause]()
     var unfinishedClauses = originalClauses
     while(!unfinishedClauses.isEmpty) {
       val (unreducable,reducable) = unfinishedClauses.partition {
@@ -91,11 +91,11 @@ object HornLBE {
     finishedClauses
   }
   
-  def linearClausesToMap(clauses: Seq[HornClause]): HashMap[String,HornClause] = {
+  def linearClausesToMap(clauses: collection.Seq[HornClause]): HashMap[String,HornClause] = {
     new HashMap[String,HornClause]() ++ ((for (hc@HornClause(RelVar(vName,_),_) <- clauses) yield (vName,hc)).toMap)
   }
 
-  def apply(originalClauses: Seq[HornClause]): Seq[HornClause] = {
+  def apply(originalClauses: collection.Seq[HornClause]): collection.Seq[HornClause] = {
     var linearNonRecCls = UniqueLinearNonRec(originalClauses)
     var result = originalClauses
     while(!linearNonRecCls.isEmpty) {

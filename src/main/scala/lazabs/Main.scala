@@ -239,7 +239,7 @@ class GlobalParameters extends Cloneable {
     res    
   }
 
-  def withAndWOTemplates : Seq[GlobalParameters] =
+  def withAndWOTemplates : collection.Seq[GlobalParameters] =
     List({
            val p = this.clone
            p.templateBasedInterpolation = false
@@ -247,7 +247,7 @@ class GlobalParameters extends Cloneable {
          },
          this.clone)
 
-  def generalPortfolioParams : Seq[GlobalParameters] =
+  def generalPortfolioParams : collection.Seq[GlobalParameters] =
     List({
            val p = this.clone
            p.splitClauses = 0

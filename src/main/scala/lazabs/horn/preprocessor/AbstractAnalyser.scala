@@ -69,7 +69,7 @@ object AbstractAnalyser {
    * the abstract values for the body literals.
    */
   trait AbstractTransformer[Element] {
-    def transform(bodyValues : Seq[Element]) : Element
+    def transform(bodyValues : collection.Seq[Element]) : Element
   }
 }
 

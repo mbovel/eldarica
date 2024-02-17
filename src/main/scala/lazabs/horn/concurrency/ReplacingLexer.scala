@@ -63,7 +63,7 @@ class TypedefReplacingLexer(underlying : Yylex) extends Scanner {
   private var recording = false
   private val recordedSyms = new ArrayBuffer[Symbol]
 
-  private val typedefs = new MHashMap[String, Seq[Symbol]]
+  private val typedefs = new MHashMap[String, collection.Seq[Symbol]]
 
   private val replacementStack = new ArrayStack[Symbol]
 

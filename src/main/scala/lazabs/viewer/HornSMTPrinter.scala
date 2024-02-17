@@ -41,7 +41,7 @@ object HornSMTPrinter {
 
   import SMTLineariser.quoteIdentifier
 
-  def apply(system: Seq[HornClause]): String =
+  def apply(system: collection.Seq[HornClause]): String =
     "(set-info :origin \"Horn problem converted to SMT-LIB2 using Eldarica (https://github.com/uuverifiers/eldarica)\")\n" +
     "(set-logic HORN)\n" +
     system.map(Horn.getRelVarSignatures(_)).flatten.distinct

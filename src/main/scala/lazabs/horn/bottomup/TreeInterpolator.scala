@@ -54,7 +54,7 @@ import scala.collection.mutable.{ArrayBuffer, HashSet => MHashSet,
 object TreeInterpolator {
 
   type TreeInterpolatorFun =
-    (Tree[Conjunction], TermOrder, Boolean, Seq[Theory]) =>
+    (Tree[Conjunction], TermOrder, Boolean, collection.Seq[Theory]) =>
       Either[Tree[Conjunction],Conjunction]
 
   val interpolator = LinTreeInterpolator
@@ -71,7 +71,7 @@ object TreeInterpolator {
   def treeInterpolate(oriProblem : Tree[Conjunction],
                       order : TermOrder,
                       fullCEX : Boolean,
-                      theories : Seq[Theory])
+                      theories : collection.Seq[Theory])
                      : Either[Tree[Conjunction],Conjunction] =
     interpolator.treeInterpolate(oriProblem, order, fullCEX, theories)
 }
@@ -88,7 +88,7 @@ abstract class TreeInterpolator {
     def treeInterpolate(oriProblem : Tree[Conjunction],
                         order : TermOrder,
                         fullCEX : Boolean,
-                        theories : Seq[Theory])
+                        theories : collection.Seq[Theory])
                        : Either[Tree[Conjunction],Conjunction] = {
 //    println("and-tree interpolation:")
 //    oriProblem.prettyPrint
@@ -175,7 +175,7 @@ abstract class TreeInterpolator {
                   order : TermOrder)
                : (Tree[Conjunction],
                   Tree[Map[ConstantTerm, ConstantTerm]],
-                  Seq[ModelElement]) = {
+                  collection.Seq[ModelElement]) = {
     if (lazabs.GlobalParameters.get.log)
       print(" " + size(problem) + " -> ")
 

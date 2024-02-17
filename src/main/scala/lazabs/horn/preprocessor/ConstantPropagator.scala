@@ -50,7 +50,7 @@ object SimplePropagators {
    * Abstract domain for constant propagation
    */
   class ConstantPropDomain extends InliningAbstractDomain {
-    type Element = Option[Seq[Option[ITerm]]]
+    type Element = Option[collection.Seq[Option[ITerm]]]
 
     val name = "constant"
 
@@ -75,7 +75,7 @@ object SimplePropagators {
       private val prop = new ClausePropagator(clause)
       private val Clause(head, body, _) = clause
 
-      def transform(bodyVals : Seq[Element]) : Element =
+      def transform(bodyVals : collection.Seq[Element]) : Element =
         if (bodyVals exists (_.isEmpty)) {
           None
         } else {
@@ -259,7 +259,7 @@ object SimplePropagators {
             // nothing
         }
 
-      def transform(bodyVals : Seq[Element]) : Element =
+      def transform(bodyVals : collection.Seq[Element]) : Element =
         if (bodyVals exists (_.isEmpty)) {
           None
         } else {

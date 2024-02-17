@@ -95,9 +95,9 @@ object ASTree {
   // ADT
   
   case class ADTctor(adt: ADT, name: String,
-                     exprList: Seq[Expression]) extends Expression
+                     exprList: collection.Seq[Expression]) extends Expression
   case class ADTsel(adt: ADT, name: String,
-                    exprList: Seq[Expression]) extends Expression
+                    exprList: collection.Seq[Expression]) extends Expression
   case class ADTtest(adt: ADT, sortNum : Int,
                      v: Expression) extends Expression
   case class ADTsize(adt: ADT, sortNum : Int,
@@ -105,9 +105,9 @@ object ASTree {
 
   // Heap theory
   case class HeapFun(heap: Heap, name: String,
-                     exprList: Seq[Expression]) extends Expression
+                     exprList: collection.Seq[Expression]) extends Expression
   case class HeapPred(heap: Heap, name: String,
-                     exprList: Seq[Expression]) extends Expression
+                     exprList: collection.Seq[Expression]) extends Expression
   // Bit-vectors
 
   case class BVconst(bits: Int, num : BigInt) extends Expression

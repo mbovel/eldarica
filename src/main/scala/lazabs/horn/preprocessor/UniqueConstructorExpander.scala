@@ -59,7 +59,7 @@ object UniqueConstructorExpander {
 
     // For each argument, store the index of the unique constructor that
     // was identified
-    type Element = Option[Seq[Option[Int]]]
+    type Element = Option[collection.Seq[Option[Int]]]
 
     def bottom(p : Predicate) : Element = None
     def isBottom(b : Element) : Boolean = b.isEmpty
@@ -133,7 +133,7 @@ object UniqueConstructorExpander {
           }
         }
 
-      def transform(bodyVals : Seq[Element]) : Element =
+      def transform(bodyVals : collection.Seq[Element]) : Element =
         if (bodyVals exists (_.isEmpty)) {
           None
         } else try {
@@ -207,7 +207,7 @@ class UniqueConstructorExpander extends ArgumentExpander {
   private var ctorElements : GMap[Predicate, CtorTypeDomain.Element] = _
 
   def expand(pred : Predicate, argNum : Int, sort : Sort)
-           : Option[(Seq[(ITerm, Sort, String)], Option[ITerm])] =
+           : Option[(collection.Seq[(ITerm, Sort, String)], Option[ITerm])] =
     for (value     <- ctorElements get pred;
          someValue <- value;
          ctorIndex <- someValue(argNum)) yield {

@@ -885,7 +885,7 @@ false :- p(A,D,E,B,C,F),(D > 1).
   val H = new ConstantTerm("H")
   val I = new ConstantTerm("I")
   
-  def genFischerProcess(id : ITerm) : (Process, Seq[Clause], Predicate) = {
+  def genFischerProcess(id : ITerm) : (Process, collection.Seq[Clause], Predicate) = {
     val p0 = new Predicate("p0", 5)
     val p1 = new Predicate("p1", 5)
     val p2 = new Predicate("p2", 5)
